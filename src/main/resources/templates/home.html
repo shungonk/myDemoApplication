@@ -3,11 +3,30 @@
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
     <head>
         <meta charset="UTF-8">
-        <title>Welcome</title>
+        <title>Hello World!</title>
     </head>
     <body>
-        <h1>Welcome!</h1>
-        
-        <p>Click <a th:href="@{/wallet}">here</a> to use.</p>
+        <h1 th:inline="text">Hello, [[${#httpServletRequest.remoteUser}]]</h1>
+        <form th:action="@{/logout}" method="post">
+            <input type="submit" value="Sign Out"/>
+        </form>
+
+        <div>
+            
+
+            <h2>wallet</h2>
+            <div id="wallet_amount">0</div>
+            <button id="reload_wallet">Reload Wallet</button>
+    
+            <p>Public  Key</p>
+            <textarea id="public_key" rows="2" cols="100"></textarea>
+    
+            <p>Private  Key</p>
+            <textarea id="private_key" rows="1" cols="100"></textarea>
+    
+            <p>Blockchain Address</p>
+            <textarea id="blockchain_address" rows="1" cols="100"></textarea>
+    
+        </div>
     </body>
 </html>

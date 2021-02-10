@@ -8,19 +8,19 @@ import java.util.Optional;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
-public class UserAccount extends User {
+public class UserInfo extends User {
 
     private static final long serialVersionUID = 2584805843445698023L;
     
     private final Map<String, Wallet> wallets;
 
-    public UserAccount(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired,
+    public UserInfo(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired,
             boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities, Map<String, Wallet> wallets) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
         this.wallets = wallets;
     }
 
-    public UserAccount(String username, String password, Collection<? extends GrantedAuthority> authorities, Map<String, Wallet> wallets) {
+    public UserInfo(String username, String password, Collection<? extends GrantedAuthority> authorities, Map<String, Wallet> wallets) {
         super(username, password, authorities);
         this.wallets = wallets;
     }

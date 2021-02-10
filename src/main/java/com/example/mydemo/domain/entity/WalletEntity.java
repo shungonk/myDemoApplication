@@ -1,13 +1,19 @@
 package com.example.mydemo.domain.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="wallet")
-public class WalletEntity {
+@IdClass(WalletPk.class)
+public class WalletEntity implements Serializable {
+
+    private static final long serialVersionUID = 51217068822683539L;
 
     @Id
     @Column(name="name")
