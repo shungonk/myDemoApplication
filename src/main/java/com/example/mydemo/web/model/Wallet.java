@@ -14,6 +14,19 @@ public final class Wallet {
         this.privateKey = privateKey;
     }
 
+    public static Wallet of(String blockchainAddress, String publicKey, String privateKey) {
+        return new Wallet(blockchainAddress, publicKey, privateKey);
+    }
+
+    public static Wallet ofEntity(WalletEntity entity) {
+        return Wallet.of(entity.getBlockchainAddress(), entity.getPublicKey(), entity.getPrivateKey());
+    }
+
+    public static Wallet generate() {
+        //TODO: write codes of generating privatekey, publickey, and blockchianaddress
+        return null;
+    }
+
     public String getBlockchainAddress() {
         return blockchainAddress;
     }
@@ -24,23 +37,6 @@ public final class Wallet {
 
     public String getPrivateKey() {
         return privateKey;
-    }
-
-    public static Wallet of(String blockchainAddress, String publicKey, String privateKey) {
-        return new Wallet(blockchainAddress, publicKey, privateKey);
-    }
-
-    public static Wallet ofEntity(WalletEntity entity) {
-        return Wallet.of(entity.getBlockchainAddress(), entity.getPublicKey(), entity.getPrivateKey());
-    }
-
-    public static Wallet generate() {
-        //TODO: write codes of generate privatekey, publickey, and blockchianaddress
-        return null;
-    }
-
-    public Wallet copy() {
-        return Wallet.of(this.blockchainAddress, this.publicKey, this.privateKey);
     }
 
     @Override

@@ -25,23 +25,34 @@ public class UserAccount extends User {
         this.wallets = wallets;
     }
 
-    public boolean addWallet(String name, Wallet wallet) {
-        return wallets.putIfAbsent(name, wallet) == null;
+    public boolean hasWalletNamed(String name) {
+        return wallets.containsKey(name);
     }
 
-    public boolean addNewWallet(String name) {
-        return wallets.putIfAbsent(name, Wallet.generate()) == null;
+    public boolean hasWallet(Wallet wallet) {
+        return wallets.containsValue(wallet);
     }
 
-    public Optional<Map.Entry<String, Wallet>> getWallet(String name) {
-        return wallets.entrySet().stream().filter(e -> e.getKey().equals(name)).findAny();
+    public Optional<Wallet> getWallet(String name) {
+        return Optional.ofNullable(wallets.get(name));
     }
 
-    public boolean removeWallet(Map.Entry<String, Wallet> entry) {
-        return wallets.remove(entry.getKey(), entry.getValue());
-    }
-
-    public Map<String, Wallet> getUnmodifiedWallets() {
+    public Map<String, Wallet> getWallets() {
         return Collections.unmodifiableMap(wallets);
+    }
+
+    //TODO: have to access to wallet table in the below methods.
+
+    public void addWallet(String name, Wallet wallet) {
+        wallets.putIfAbsent(name, wallet);
+    }
+
+    public void addNewWallet(String name) {
+        Wallet newWallet = Wallet.generate();
+        wallets.putIfAbsent(name, newWallet);
+    }
+
+    public void removeWallet(String name) {
+        wallets.remove(name);
     }
 }

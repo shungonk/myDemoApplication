@@ -24,7 +24,6 @@ public class UserAccountService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private WalletRepository walletRepository;
 
