@@ -7,19 +7,19 @@
     </head>
     <body>
         <div>
-            <h2>wallet</h2>
-            <div id="wallet_amount">0</div>
-            <button id="reload_wallet">Reload Wallet</button>
+            <h1 th:text="${wallet.name}">wallet</h1>
+            <div id="wallet_amount" style="font-size: x-large;">0</div>
+            <button id="reload_wallet">Reload Amount</button>
+            <button type="button" onclick="history.back()">Back</button>
     
             <p>Public  Key</p>
-            <textarea id="public_key" rows="2" cols="100"></textarea>
+            <textarea id="public_key" rows="2" cols="100" th:text="${wallet.publicKey}" readonly></textarea>
     
             <p>Private  Key</p>
-            <textarea id="private_key" rows="1" cols="100"></textarea>
+            <textarea id="private_key" rows="1" cols="100" th:text="${wallet.privateKey}" readonly></textarea>
     
             <p>Blockchain Address</p>
-            <textarea id="blockchain_address" rows="1" cols="100"></textarea>
-    
+            <textarea id="blockchain_address" rows="1" cols="100" th:text="${wallet.blockchainAddress}" readonly></textarea>
         </div>
     
         <div>

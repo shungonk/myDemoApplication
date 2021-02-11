@@ -1,6 +1,6 @@
 package com.example.mydemo.config;
 
-import com.example.mydemo.domain.service.UserAccountService;
+import com.example.mydemo.web.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -17,17 +17,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	UserAccountService userAccountService;
+	UserService userService;
 
 	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http
+	protected void configure(HttpSecurity httpSecurity) throws Exception {
+		httpSecurity
 			.authorizeRequests()
-				.antMatchers(
-					"/"
-					, "/index"
-					, "/signup"
-				)
+				.antMatchers("/", "/index", "/signup")
 				.permitAll()
 				.anyRequest().authenticated()
 				.and()
@@ -41,7 +37,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userAccountService).passwordEncoder(passwordEncoder());
+		auth.userDetailsService(userService)
+			.passwordEncoder(passwordEncoder());
 	}
 	
 	@Bean

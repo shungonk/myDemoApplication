@@ -1,8 +1,7 @@
-package com.example.mydemo.domain.service;
+package com.example.mydemo.web.service;
 
 import com.example.mydemo.domain.entity.UserEntity;
 import com.example.mydemo.domain.repository.UserRepository;
-import com.example.mydemo.domain.repository.WalletRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -13,12 +12,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserAccountService implements UserDetailsService {
+public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private WalletRepository walletRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

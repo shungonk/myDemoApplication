@@ -20,8 +20,9 @@ public final class Wallet {
         return new Wallet(name, blockchainAddress, publicKey, privateKey);
     }
 
-    public static Wallet ofEntity(WalletEntity entity) {
-        return Wallet.of(entity.getName(), entity.getBlockchainAddress(), entity.getPublicKey(), entity.getPrivateKey());
+    public static Wallet fromEntity(WalletEntity entity) {
+        if (entity == null) return null;
+        return of(entity.getName(), entity.getBlockchainAddress(), entity.getPublicKey(), entity.getPrivateKey());
     }
 
     public static Wallet generate() {
