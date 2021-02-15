@@ -16,13 +16,13 @@ public class WalletService {
     WalletRepository walletRepository;
 
     public Wallet findByPrimaryKey(String name, String username) {
-        return Wallet.fromEntity(walletRepository.findByNameAndUsername(name, username));
+        return Wallet.ofEntity(walletRepository.findByNameAndUsername(name, username));
     }
 
     public List<Wallet> findByUsername(String username) {
         return walletRepository.findByUsername(username)
                     .stream()
-                    .map(Wallet::fromEntity)
+                    .map(Wallet::ofEntity)
                     .sorted((w1, w2) -> w1.getName().compareTo(w2.getName()))
                     .collect(Collectors.toList());
     }

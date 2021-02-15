@@ -2,27 +2,23 @@ package com.example.mydemo.web.model;
 
 import com.example.mydemo.domain.entity.WalletEntity;
 
-public final class Wallet {
+public class Wallet {
     
-    private final String name;
-    private final String blockchainAddress;
-    private final String publicKey;
-    private final String privateKey;
+    private String name;
+    private String blockchainAddress;
+    private String publicKey;
+    private String privateKey;
 
-    private Wallet(String name, String blockchainAddress, String publicKey, String privateKey) {
+    public Wallet(String name, String blockchainAddress, String publicKey, String privateKey) {
         this.name = name;
         this.blockchainAddress = blockchainAddress;
         this.publicKey = publicKey;
         this.privateKey = privateKey;
     }
 
-    public static Wallet of(String name, String blockchainAddress, String publicKey, String privateKey) {
-        return new Wallet(name, blockchainAddress, publicKey, privateKey);
-    }
-
-    public static Wallet fromEntity(WalletEntity entity) {
+    public static Wallet ofEntity(WalletEntity entity) {
         if (entity == null) return null;
-        return of(entity.getName(), entity.getBlockchainAddress(), entity.getPublicKey(), entity.getPrivateKey());
+        return new Wallet(entity.getName(), entity.getBlockchainAddress(), entity.getPublicKey(), entity.getPrivateKey());
     }
 
     public static Wallet generate() {

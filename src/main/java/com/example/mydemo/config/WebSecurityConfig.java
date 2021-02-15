@@ -29,6 +29,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.and()
 			.formLogin()
 				.loginPage("/login")
+				// .successForwardUrl("/home") why error??
 				.permitAll()
 				.and()
 			.logout()
