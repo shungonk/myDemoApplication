@@ -3,18 +3,22 @@
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
     <head>
         <meta charset="UTF-8">
+        <meta name="_csrf" th:content="${_csrf.token}"/>
+        <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
         <title>Send</title>
-
-        <style>
-            div.data {
-                margin-left: 10px;
-                word-wrap: break-word;
-            }
-        </style>
-
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script>
             $(function () {
+                
+                function submit_token_to_ajaxheader() {
+                    let token = $("meta[name='_csrf']").attr("content");
+                    let header = $("meta[name='_csrf_header']").attr("content");
+
+                    $(document).ajaxSend(function(e, xhr, options) {
+                        xhr.setRequestHeader(header, token);
+                    });
+                }
+
                 $('#send_money_button').click(function () {
                     let confirm_text = 'Are you sure to send?';
                     let confirm_result = confirm(confirm_text);
@@ -24,13 +28,14 @@
                     }
 
                     let transaction_data = {
-                        'sender_private_key': $('#private_key').val(),
-                        'sender_blockchain_address': $('#blockchain_address').val(),
-                        'recipient_blockchain_address': $('#recipient_blockchain_address').val(),
-                        'sender_public_key': $('#public_key').val(),
+                        'senderPrivateKey': $('#private_key').val(),
+                        'senderAddress': $('#blockchain_address').val(),
+                        'recipientAddress': $('#recipient_blockchain_address').val(),
+                        'senderPublicKey': $('#public_key').val(),
                         'value': $('#send_amount').val(),
                     };
 
+                    submit_token_to_ajaxheader();
                     $.ajax({
                         url: '/transaction',
                         type: 'POST',
@@ -51,6 +56,29 @@
                     })
                 });
 
+                function reload_amount() {
+                    let data = {'blockchain_address': $('#blockchain_address').val()}
+
+                    submit_token_to_ajaxheader();
+                    $.ajax({
+                        url: '/wallet/amount',
+                        type: 'GET',
+                        data: data,
+                        success: function (response) {
+                            let amount = response['amount'];
+                            $('#wallet_amount').text(amount);
+                            console.info(amount)
+                        },
+                        error: function(error) {
+                            console.error(error)
+                        }
+                    })
+                }
+
+                $('#reload_wallet').click(function(){
+                    reload_amount();
+                });
+
             //  setInterval(reload_amount, 3000)
 
             })
@@ -64,19 +92,19 @@
             <button type="button" onclick="history.back()">Back</button>
     
             <h4>Public  Key</h4>
-            <div id="public_key" class="data" th:text="${wallet.publicKey}"></div>
+            <textarea id="public_key" rows="2" cols="90" th:text="${wallet.publicKey}" readonly></textarea>
     
             <h4>Private  Key</h4>
-            <div id="private_key" class="data" th:text="${wallet.privateKey}"></div>
+            <textarea id="private_key" rows="2" cols="90" th:text="${wallet.privateKey}" readonly></textarea>
     
             <h4>Blockchain Address</h4>
-            <div id="blockchain_address" class="data" th:text="${wallet.blockchainAddress}"></div>
+            <textarea id="blockchain_address" rows="1" cols="80" th:text="${wallet.blockchainAddress}" readonly></textarea>
         </div>
     
         <div>
             <h2>send money</h2>
             <div>
-                Address: <input id="recipient_blockchain_address" size="100" type="text">
+                Address: <input id="recipient_blockchain_address" size="80" type="text">
                 <br>
                 Amount: <input id="send_amount" type="number">
                 <br>
