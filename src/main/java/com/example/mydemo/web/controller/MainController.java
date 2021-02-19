@@ -61,12 +61,11 @@ public class MainController {
 			form.getValue(),
 			form.generateSignature());
 
-        if (!transaction.validateTransactionRequest() ||
-            !transaction.verifySignature()) {
+        if (!transaction.validateTransactionRequest()) {
             return ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(StringUtil.messageJson("Invalid transaction"));
+                .body(StringUtil.messageJson("Invalid input"));
         }
 
         try {
@@ -83,8 +82,8 @@ public class MainController {
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body("Server error");
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Server Error");
         }
     }
 }
