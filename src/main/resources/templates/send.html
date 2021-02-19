@@ -41,9 +41,11 @@
                         type: 'POST',
                         contentType: 'application/json',
                         data: JSON.stringify(transaction_data)
-                    }).then(
-                        data => alert(data.message)
-                    );
+                    }).done(function(data, status, xhr) {
+                        alert(data.message);
+                    }).fail(function(xhr, status, error) {
+                        alert('Send failed: ' + xhr.status);
+                    });
                 });
 
                 function reload_amount() {
