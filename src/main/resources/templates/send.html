@@ -40,20 +40,10 @@
                         url: '/transaction',
                         type: 'POST',
                         contentType: 'application/json',
-                        data: JSON.stringify(transaction_data),
-                        success: function (response) {
-                            console.info(response);
-                            if (response.message == 'fail') {
-                                alert('Send fail')
-                            } else {
-                                alert('Send success');
-                            }
-                        },
-                        error: function (response) {
-                            console.error(response);
-                            alert('Send failed');
-                        }
-                    })
+                        data: JSON.stringify(transaction_data)
+                    }).then(
+                        data => alert(data.message)
+                    );
                 });
 
                 function reload_amount() {
@@ -92,19 +82,19 @@
             <button type="button" onclick="history.back()">Back</button>
     
             <h4>Public  Key</h4>
-            <textarea id="public_key" rows="2" cols="90" th:text="${wallet.publicKey}" readonly></textarea>
+            <textarea id="public_key" rows="2" cols="100" th:text="${wallet.publicKey}" readonly></textarea>
     
             <h4>Private  Key</h4>
-            <textarea id="private_key" rows="2" cols="90" th:text="${wallet.privateKey}" readonly></textarea>
+            <textarea id="private_key" rows="2" cols="100" th:text="${wallet.privateKey}" readonly></textarea>
     
             <h4>Blockchain Address</h4>
-            <textarea id="blockchain_address" rows="1" cols="80" th:text="${wallet.blockchainAddress}" readonly></textarea>
+            <textarea id="blockchain_address" rows="1" cols="100" th:text="${wallet.blockchainAddress}" readonly></textarea>
         </div>
     
         <div>
             <h2>send money</h2>
             <div>
-                Address: <input id="recipient_blockchain_address" size="80" type="text">
+                Address: <input id="recipient_blockchain_address" size="90" type="text">
                 <br>
                 Amount: <input id="send_amount" type="number">
                 <br>
