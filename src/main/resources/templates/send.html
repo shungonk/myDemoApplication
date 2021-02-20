@@ -48,30 +48,32 @@
                     });
                 });
 
-                function reload_amount() {
-                    let data = {'blockchain_address': $('#blockchain_address').val()}
+                function reload_balance() {
+                    let data = {'address': $('#blockchain_address').val()}
 
                     submit_token_to_ajaxheader();
                     $.ajax({
-                        url: '/wallet/amount',
+                        url: '/balance',
                         type: 'GET',
                         data: data,
-                        success: function (response) {
-                            let amount = response['amount'];
-                            $('#wallet_amount').text(amount);
-                            console.info(amount)
-                        },
-                        error: function(error) {
-                            console.error(error)
-                        }
-                    })
+                    }).done(function(data, status, xhr) {
+                        let balance = data['balance'];
+                        $('#wallet_amount').text(balance);
+                    }).fail(function(xhr, status, error) {
+                        alert('Send failed');
+                    });
                 }
 
-                $('#reload_wallet').click(function(){
-                    reload_amount();
+                $('#reload_balance').click(function(){
+                    reload_balance();
                 });
 
-            //  setInterval(reload_amount, 3000)
+                $('#home').click(function() {
+                    window.location.href = '/home';
+                });
+
+                reload_balance();
+                setInterval(reload_balance, 4000);
 
             })
         </script>
@@ -79,9 +81,10 @@
     <body>
         <div>
             <h1 th:text="${wallet.name}">wallet</h1>
-            <div id="wallet_amount" style="font-size: x-large;">0</div>
-            <button id="reload_wallet">Reload Amount</button>
-            <button type="button" onclick="history.back()">Back</button>
+
+            <div id="wallet_amount" style="font-size:xx-large; margin-bottom: 5px;">0.00</div>
+            <button id="reload_balance">Reload Balance</button>
+            <button id="home">Home</button>
     
             <h4>Public  Key</h4>
             <textarea id="public_key" rows="2" cols="100" th:text="${wallet.publicKey}" readonly></textarea>
