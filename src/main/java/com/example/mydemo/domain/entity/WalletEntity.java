@@ -26,20 +26,20 @@ public class WalletEntity implements Serializable {
     @Column(name="blockchain_address")
     private String address;
 
-    @Column(name="public_key")
-    private String publicKey;
-
     @Column(name="private_key")
     private String privateKey;
 
+    @Column(name="public_key")
+    private String publicKey;
+
     public WalletEntity() {}
 
-    public WalletEntity(String name, String username, String address, String publicKey, String privateKey) {
+    public WalletEntity(String name, String username, String address, String privateKey, String publicKey) {
         this.name = name;
         this.username = username;
         this.address = address;
-        this.publicKey = publicKey;
         this.privateKey = privateKey;
+        this.publicKey = publicKey;
     }
 
     public String getName() {
@@ -54,12 +54,12 @@ public class WalletEntity implements Serializable {
         return address;
     }
 
-    public String getPublicKey() {
-        return publicKey;
-    }
-
     public String getPrivateKey() {
         return privateKey;
+    }
+
+    public String getPublicKey() {
+        return publicKey;
     }
 
     public void setName(String name) {
@@ -74,11 +74,11 @@ public class WalletEntity implements Serializable {
         this.address = address;
     }
 
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
-    }
-
     public void setPrivateKey(String privateKey) {
         this.privateKey = privateKey;
+    }
+
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
     }
 }

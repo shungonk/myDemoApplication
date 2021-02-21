@@ -15,23 +15,23 @@ public class Wallet {
     
     private String name;
     private String address;
-    private String publicKey;
     private String privateKey;
+    private String publicKey;
 
-    public Wallet(String name, String address, String publicKey, String privateKey) {
+    public Wallet(String name, String address, String privateKey, String publicKey) {
         this.name = name;
         this.address = address;
-        this.publicKey = publicKey;
         this.privateKey = privateKey;
+        this.publicKey = publicKey;
     }
 
     public static Wallet fromEntity(WalletEntity e) {
         if (e == null) return null;
-        return new Wallet(e.getName(), e.getAddress(), e.getPublicKey(), e.getPrivateKey());
+        return new Wallet(e.getName(), e.getAddress(), e.getPrivateKey(), e.getPublicKey());
     }
 
     public WalletEntity toEntity(String username) {
-        return new WalletEntity(name, username, address, publicKey, privateKey);
+        return new WalletEntity(name, username, address, privateKey, publicKey);
     }
 
     public String getName() {
@@ -42,12 +42,12 @@ public class Wallet {
         return address;
     }
 
-    public String getPublicKey() {
-        return publicKey;
-    }
-
     public String getPrivateKey() {
         return privateKey;
+    }
+
+    public String getPublicKey() {
+        return publicKey;
     }
 
     public static Wallet create(String name) {
@@ -103,8 +103,8 @@ public class Wallet {
             return new Wallet(
                 name,
                 address, 
-                Base64.getEncoder().encodeToString(pub.getEncoded()), 
-                Base64.getEncoder().encodeToString(pvt.getEncoded()));
+                Base64.getEncoder().encodeToString(pvt.getEncoded()), 
+                Base64.getEncoder().encodeToString(pub.getEncoded()));
             
         } catch (Exception e) {
             throw new RuntimeException(e);
