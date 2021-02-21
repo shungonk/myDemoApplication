@@ -10,6 +10,8 @@
         <script>
             $(function () {
                 submit_token_to_ajaxheader();
+
+                load_balance();
                 
                 function submit_token_to_ajaxheader() {
                     let token = $("meta[name='_csrf']").attr("content");
@@ -71,8 +73,7 @@
                     location.href = '/home';
                 });
 
-                load_balance();
-                // setInterval(load_balance, 4000);
+                setInterval(load_balance, 4000);
 
             })
         </script>

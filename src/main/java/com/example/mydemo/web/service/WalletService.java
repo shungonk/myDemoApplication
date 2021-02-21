@@ -24,10 +24,9 @@ public class WalletService {
     }
 
     public List<Wallet> findByUsername(String username) {
-        return walletRepository.findByUsername(username)
+        return walletRepository.findByUsernameOrderById(username)
                     .stream()
                     .map(Wallet::fromEntity)
-                    .sorted((w1, w2) -> w1.getName().compareTo(w2.getName()))
                     .collect(Collectors.toList());
     }
 
