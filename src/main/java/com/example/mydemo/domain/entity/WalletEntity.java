@@ -32,14 +32,18 @@ public class WalletEntity implements Serializable {
     @Column(name="public_key")
     private String publicKey;
 
+    @Column(name="mine")
+    public boolean mine;
+
     public WalletEntity() {}
 
-    public WalletEntity(String name, String username, String address, String privateKey, String publicKey) {
+    public WalletEntity(String name, String username, String address, String privateKey, String publicKey, boolean mine) {
         this.name = name;
         this.username = username;
         this.address = address;
         this.privateKey = privateKey;
         this.publicKey = publicKey;
+        this.mine = mine;
     }
 
     public String getName() {
@@ -62,6 +66,10 @@ public class WalletEntity implements Serializable {
         return publicKey;
     }
 
+    public boolean isMine() {
+        return mine;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -80,5 +88,9 @@ public class WalletEntity implements Serializable {
 
     public void setPublicKey(String publicKey) {
         this.publicKey = publicKey;
+    }
+
+    public void setMine(boolean mine) {
+        this.mine = mine;
     }
 }

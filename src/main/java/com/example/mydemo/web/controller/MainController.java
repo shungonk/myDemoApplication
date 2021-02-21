@@ -159,4 +159,33 @@ public class MainController {
                 .body("External API Error");
         }
     }
+
+    @ResponseBody
+    @PostMapping(value="/mine")
+    public ResponseEntity<String> mine(@RequestParam("address") String address) {
+        try {
+            var client = new RestTemplate(new SimpleClientHttpRequestFactory());
+            var headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            var uri = new URI(String.format("http://%s:%s/mine",
+                bcsProperties.getHost(), bcsProperties.getPort()));
+            var queryURI = UriComponentsBuilder
+                .fromUri(uri)
+                .queryParam("address", address)
+                .build().encode().toUri();
+            var req = new RequestEntity<>(headers, HttpMethod.POST, queryURI);
+            return client.exchange(req, String.class);
+
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Server Error");
+        } catch (RestClientException e) {
+            e.printStackTrace();
+            return ResponseEntity
+                .status(HttpStatus.BAD_GATEWAY)
+                .body("External API Error");
+        }
+    }
 }

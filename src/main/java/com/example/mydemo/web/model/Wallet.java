@@ -17,21 +17,23 @@ public class Wallet {
     private String address;
     private String privateKey;
     private String publicKey;
+    private boolean mine;
 
-    public Wallet(String name, String address, String privateKey, String publicKey) {
+    public Wallet(String name, String address, String privateKey, String publicKey, boolean mine) {
         this.name = name;
         this.address = address;
         this.privateKey = privateKey;
         this.publicKey = publicKey;
+        this.mine = mine;
     }
 
     public static Wallet fromEntity(WalletEntity e) {
         if (e == null) return null;
-        return new Wallet(e.getName(), e.getAddress(), e.getPrivateKey(), e.getPublicKey());
+        return new Wallet(e.getName(), e.getAddress(), e.getPrivateKey(), e.getPublicKey(), e.isMine());
     }
 
     public WalletEntity toEntity(String username) {
-        return new WalletEntity(name, username, address, privateKey, publicKey);
+        return new WalletEntity(name, username, address, privateKey, publicKey, mine);
     }
 
     public String getName() {
@@ -48,6 +50,10 @@ public class Wallet {
 
     public String getPublicKey() {
         return publicKey;
+    }
+
+    public boolean isMine() {
+        return mine;
     }
 
     public static Wallet create(String name) {
@@ -104,7 +110,8 @@ public class Wallet {
                 name,
                 address, 
                 Base64.getEncoder().encodeToString(pvt.getEncoded()), 
-                Base64.getEncoder().encodeToString(pub.getEncoded()));
+                Base64.getEncoder().encodeToString(pub.getEncoded()),
+                false);
             
         } catch (Exception e) {
             throw new RuntimeException(e);
