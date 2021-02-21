@@ -103,8 +103,8 @@ public class Wallet {
             return new Wallet(
                 name,
                 address, 
-                Base64.getEncoder().encodeToString(pvt.getEncoded()), 
-                Base64.getEncoder().encodeToString(pub.getEncoded()));
+                Base64.getEncoder().encodeToString(pub.getEncoded()), 
+                Base64.getEncoder().encodeToString(pvt.getEncoded()));
             
         } catch (Exception e) {
             throw new RuntimeException(e);
