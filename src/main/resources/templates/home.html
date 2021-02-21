@@ -3,17 +3,66 @@
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
     <head>
         <meta charset="UTF-8">
+        <meta name="_csrf" th:content="${_csrf.token}"/>
+        <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
         <title>Home</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script>
+            $(function () {
+                submit_token_to_ajaxheader();
+
+                function submit_token_to_ajaxheader() {
+                    let token = $("meta[name='_csrf']").attr("content");
+                    let header = $("meta[name='_csrf_header']").attr("content");
+
+                    $(document).ajaxSend(function(e, xhr, options) {
+                        xhr.setRequestHeader(header, token);
+                    });
+                }
+
+                function new_wallet() {
+                    let pattern = /^[a-zA-Z0-9!-/:-@¥[-`{-~]{1,50}$/;
+                    var name;
+                    while (true) {
+                        name = prompt('Enter the name of your new wallet (within 50 byte chars).');
+                        if (name === null) return;
+                        if (name.match(pattern)) break;
+                    }
+
+                    if (!confirm(`Are you sure to create \'${name}\' ?`)) {
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '/wallet/new',
+                        type: 'POST',
+                        data: {'name': name},
+                        async: false
+                    }).done(function(data, status, xhr) {
+                        alert(data['message']);
+                        // location.href = '/home';
+                    }).fail(function(xhr, status, error) {
+                        alert('Create failed.');
+                    });
+                }
+
+                $('#new_wallet').click(function(){
+                    new_wallet();
+                });
+
+            })
+        </script>
     </head>
     <body>
         <h1 th:inline="text">Hello, [[${#httpServletRequest.remoteUser}]]</h1>
         <form th:action="@{/logout}" method="post">
-            <input type="submit" value="Sign Out"/>
+            <input type="submit" value="Sign Out" style="margin-bottom: 20px;"/>
         </form>
 
         <div th:each="wallet : ${walletList}">
             <span th:text="${wallet.name}"></span>
-            <a href="/send" th:href="@{/send(name=${wallet.name})}">Enter</a>
+            <a href="/wallet" th:href="@{/wallet(name=${wallet.name})}">Enter</a>
         </div>
+        <input id="new_wallet" type="submit" value="New Wallet" style="margin-top: 10px;margin-bottom: 20px;"/>
     </body>
 </html>

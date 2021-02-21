@@ -15,15 +15,27 @@ public class WalletService {
     @Autowired
     WalletRepository walletRepository;
 
-    public Wallet findByPrimaryKey(String name, String username) {
-        return Wallet.ofEntity(walletRepository.findByNameAndUsername(name, username));
+    public Wallet findByNameAndUsername(String name, String username) {
+        return Wallet.fromEntity(walletRepository.findByNameAndUsername(name, username));
+    }
+
+    public long countByNameAndUsername(String name, String username) {
+        return walletRepository.countByNameAndUsername(name, username);
     }
 
     public List<Wallet> findByUsername(String username) {
         return walletRepository.findByUsername(username)
                     .stream()
-                    .map(Wallet::ofEntity)
+                    .map(Wallet::fromEntity)
                     .sorted((w1, w2) -> w1.getName().compareTo(w2.getName()))
                     .collect(Collectors.toList());
+    }
+
+    public long countByUsername(String username) {
+        return walletRepository.countByUsername(username);
+    }
+
+    public void save(String username, Wallet wallet) {
+        walletRepository.save(wallet.toEntity(username));
     }
 }

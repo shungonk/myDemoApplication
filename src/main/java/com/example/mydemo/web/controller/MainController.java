@@ -7,6 +7,7 @@ import com.example.mydemo.config.BlockchainServerProperties;
 import com.example.mydemo.util.StringUtil;
 import com.example.mydemo.web.model.TransactionForm;
 import com.example.mydemo.web.model.TransactionRequest;
+import com.example.mydemo.web.model.Wallet;
 import com.example.mydemo.web.service.WalletService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,21 +41,36 @@ public class MainController {
     WalletService walletService;
     
     @GetMapping(value="/home")
-    public String home(Authentication authentication, Model model) {
-        var user = (User) authentication.getPrincipal();
+    public String home(Authentication auth, Model model) {
+        var user = (User) auth.getPrincipal();
         var walletList = walletService.findByUsername(user.getUsername());
         model.addAttribute("walletList", walletList);
         return "home";
     }
 
-    @GetMapping(value="/send")
-    public String send(@RequestParam("name") String name, Authentication authentication, Model model) {
-        var user = (User) authentication.getPrincipal();
-        var wallet = walletService.findByPrimaryKey(name, user.getUsername());
+    @GetMapping(value="/wallet")
+    public String wallet(@RequestParam("name") String name, Authentication auth, Model model) {
+        var user = (User) auth.getPrincipal();
+        var wallet = walletService.findByNameAndUsername(name, user.getUsername());
         model.addAttribute("wallet", wallet);
-        return "send";
+        return "wallet";
     }
 
+    @ResponseBody
+    @PostMapping(value="/wallet/new", produces = "application/json")
+    public String walletNew(@RequestParam("name") String name, Authentication auth, Model model) {
+        var user = (User) auth.getPrincipal();
+        var count = walletService.countByNameAndUsername(name, user.getUsername());
+        if (count == 0) {
+            var newWallet = Wallet.create(name);
+            walletService.save(user.getUsername(), newWallet);
+            return StringUtil.messageJson("Created!");
+        } else {
+            return StringUtil.messageJson("Error: Name Already Exists.");
+        }
+    }
+
+    @ResponseBody
     @GetMapping(value="/balance")
     public ResponseEntity<String> balance(@RequestParam("address") String address) {
         try {

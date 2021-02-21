@@ -24,7 +24,7 @@ public class WalletEntity implements Serializable {
     private String username;
 
     @Column(name="blockchain_address")
-    private String blockchainAddress;
+    private String address;
 
     @Column(name="public_key")
     private String publicKey;
@@ -34,10 +34,10 @@ public class WalletEntity implements Serializable {
 
     public WalletEntity() {}
 
-    public WalletEntity(String name, String username, String blockchainAddress, String publicKey, String privateKey) {
+    public WalletEntity(String name, String username, String address, String publicKey, String privateKey) {
         this.name = name;
         this.username = username;
-        this.blockchainAddress = blockchainAddress;
+        this.address = address;
         this.publicKey = publicKey;
         this.privateKey = privateKey;
     }
@@ -50,8 +50,8 @@ public class WalletEntity implements Serializable {
         return username;
     }
 
-    public String getBlockchainAddress() {
-        return blockchainAddress;
+    public String getAddress() {
+        return address;
     }
 
     public String getPublicKey() {
@@ -70,8 +70,8 @@ public class WalletEntity implements Serializable {
         this.username = username;
     }
 
-    public void setBlockchainAddress(String blockchainAddress) {
-        this.blockchainAddress = blockchainAddress;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public void setPublicKey(String publicKey) {

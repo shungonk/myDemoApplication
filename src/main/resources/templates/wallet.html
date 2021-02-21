@@ -5,10 +5,11 @@
         <meta charset="UTF-8">
         <meta name="_csrf" th:content="${_csrf.token}"/>
         <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-        <title>Send</title>
+        <title>Wallet</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script>
             $(function () {
+                submit_token_to_ajaxheader();
                 
                 function submit_token_to_ajaxheader() {
                     let token = $("meta[name='_csrf']").attr("content");
@@ -29,13 +30,12 @@
 
                     let transaction_data = {
                         'senderPrivateKey': $('#private_key').val(),
-                        'senderAddress': $('#blockchain_address').val(),
-                        'recipientAddress': $('#recipient_blockchain_address').val(),
+                        'senderAddress': $('#address').val(),
+                        'recipientAddress': $('#recipient_address').val(),
                         'senderPublicKey': $('#public_key').val(),
                         'value': $('#send_amount').val(),
                     };
 
-                    submit_token_to_ajaxheader();
                     $.ajax({
                         url: '/transaction',
                         type: 'POST',
@@ -48,10 +48,9 @@
                     });
                 });
 
-                function reload_balance() {
-                    let data = {'address': $('#blockchain_address').val()}
+                function load_balance() {
+                    let data = {'address': $('#address').val()}
 
-                    submit_token_to_ajaxheader();
                     $.ajax({
                         url: '/balance',
                         type: 'GET',
@@ -60,20 +59,20 @@
                         let balance = data['balance'];
                         $('#wallet_amount').text(balance);
                     }).fail(function(xhr, status, error) {
-                        alert('Send failed');
+                        alert('Get Balance Failed');
                     });
                 }
 
                 $('#reload_balance').click(function(){
-                    reload_balance();
+                    load_balance();
                 });
 
                 $('#home').click(function() {
-                    window.location.href = '/home';
+                    location.href = '/home';
                 });
 
-                reload_balance();
-                setInterval(reload_balance, 4000);
+                load_balance();
+                // setInterval(load_balance, 4000);
 
             })
         </script>
@@ -92,14 +91,14 @@
             <h4>Private  Key</h4>
             <textarea id="private_key" rows="2" cols="100" th:text="${wallet.privateKey}" readonly></textarea>
     
-            <h4>Blockchain Address</h4>
-            <textarea id="blockchain_address" rows="1" cols="100" th:text="${wallet.blockchainAddress}" readonly></textarea>
+            <h4>Address</h4>
+            <textarea id="address" rows="1" cols="100" th:text="${wallet.address}" readonly></textarea>
         </div>
     
         <div>
             <h2>send money</h2>
             <div>
-                Address: <input id="recipient_blockchain_address" size="90" type="text">
+                Address: <input id="recipient_address" size="90" type="text">
                 <br>
                 Amount: <input id="send_amount" type="number">
                 <br>
