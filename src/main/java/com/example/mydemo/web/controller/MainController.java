@@ -61,13 +61,12 @@ public class MainController {
     public String walletNew(@RequestParam("name") String name, Authentication auth, Model model) {
         var user = (User) auth.getPrincipal();
         var count = walletService.countByNameAndUsername(name, user.getUsername());
-        if (count == 0) {
-            var newWallet = Wallet.create(name);
-            walletService.save(user.getUsername(), newWallet);
-            return StringUtil.messageJson("Created!");
-        } else {
+        if (count != 0) {
             return StringUtil.messageJson("Error: Name Already Exists.");
         }
+        var newWallet = Wallet.create(name);
+        walletService.save(user.getUsername(), newWallet);
+        return StringUtil.messageJson("Created!");
     }
 
     @ResponseBody
