@@ -77,7 +77,6 @@ public class SecurityUtil {
 
 	public static String calculateMerkleRoot(List<String> hashList) {
 		var treeLayer = hashList;
-		
 		while (treeLayer.size() > 1) {
 			var nextTreeLayer = new ArrayList<String>(); 
 			for (int i = 1; i < treeLayer.size(); i++) {
@@ -85,7 +84,6 @@ public class SecurityUtil {
 			}
 			treeLayer = nextTreeLayer;
 		}
-		
 		return treeLayer.size() == 1 ? treeLayer.get(0) : ""; 
 	}
 }
