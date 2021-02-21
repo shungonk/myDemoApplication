@@ -38,6 +38,11 @@
                         'value': $('#send_amount').val(),
                     };
 
+                    if (transaction_data.senderAddress == transaction_data.recipientAddress) {
+                        alert('Same address as yours');
+                        return;
+                    }
+
                     $.ajax({
                         url: '/transaction',
                         type: 'POST',
