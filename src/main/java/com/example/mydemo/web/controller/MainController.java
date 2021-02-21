@@ -65,6 +65,28 @@ public class MainController {
             return StringUtil.messageJson("Error: Name Already Exists.");
         }
         var newWallet = Wallet.create(name);
+
+        // for demo (purchase 100): start
+        try {
+            var client = new RestTemplate(new SimpleClientHttpRequestFactory());
+            var headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            var uri = new URI(String.format("http://%s:%s/purchase",
+                bcsProperties.getHost(), bcsProperties.getPort()));
+            var queryURI = UriComponentsBuilder
+                .fromUri(uri)
+                .queryParam("address", newWallet.getAddress())
+                .queryParam("value", Float.toString(100f))
+                .build().encode().toUri();
+            var req = new RequestEntity<>(headers, HttpMethod.POST, queryURI);
+            client.exchange(req, String.class);
+
+        } catch (URISyntaxException | RestClientException e) {
+            e.printStackTrace();
+            return StringUtil.messageJson("Falied");
+        }
+        // for demo: end
+
         walletService.save(user.getUsername(), newWallet);
         return StringUtil.messageJson("Created!");
     }
