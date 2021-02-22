@@ -5,16 +5,18 @@
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
     <head>
         <title>Sign Up</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
     </head>
     <body>
         <h1>Sign Up</h1>
 
         <div>
-            User Name: <input id="username" type="text">
-            <br>
-            Password: <input id="passward" type="password">
-            <br>
-            Confirm Password: <input id="confirm_passward" type="password">
+            <label>User Name</label> 
+            <input id="username" type="text">
+            <label>Password</label>
+            <input id="passward" type="password">
+            <label>Confirm Password</label>
+            <input id="confirm_passward" type="password">
             <br>
             <button id="sign_up_button">Sign Up</button>
             <button type="button" onclick="history.back()">Back</button>

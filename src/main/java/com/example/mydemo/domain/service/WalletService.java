@@ -1,4 +1,4 @@
-package com.example.mydemo.web.service;
+package com.example.mydemo.domain.service;
 
 import java.util.List;
 import java.util.stream.Collectors;

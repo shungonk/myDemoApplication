@@ -5,6 +5,7 @@
         <meta charset="UTF-8">
         <meta name="_csrf" th:content="${_csrf.token}"/>
         <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
         <title>Wallet</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script>
@@ -33,7 +34,7 @@
                         let balance = data['balance'];
                         $('#wallet_amount').text(balance);
                     }).fail(function(xhr, status, error) {
-                        alert('Get Balance Failed');
+                        console.info('Get Balance Failed');
                     });
                 }
 
@@ -98,35 +99,35 @@
         </script>
     </head>
     <body>
-        <div>
-            <h1 th:text="${wallet.name}">wallet</h1>
+        <h1 th:text="${wallet.name}">wallet</h1>
 
-            <div id="wallet_amount" style="font-size:xx-large; margin-bottom: 5px;">0.00</div>
-            <button id="reload_balance">Reload Balance</button>
-            <button id="home">Home</button>
-            <button id="mining" th:if="${wallet.isMine}">Mining</button>
-    
-            <h4>Public  Key</h4>
-            <textarea id="public_key" rows="2" cols="100" th:text="${wallet.publicKey}" readonly></textarea>
-    
-            <h4>Private  Key</h4>
-            <textarea id="private_key" rows="2" cols="100" th:text="${wallet.privateKey}" readonly></textarea>
-    
-            <h4>Address</h4>
-            <textarea id="address" rows="1" cols="100" th:text="${wallet.address}" readonly></textarea>
-        </div>
-    
+        <div id="wallet_amount" style="font-size:xx-large; margin: 20px 0px 15px 5px;">0.00</div>
+        <button id="reload_balance">Reload Balance</button>
+        <button id="home">Home</button>
+        <button id="mining" th:if="${wallet.isMine}">Mining</button>
+
+        <h4>Public  Key</h4>
+        <textarea id="public_key" rows="2" th:text="${wallet.publicKey}" readonly></textarea>
+
+        <h4>Private  Key</h4>
+        <textarea id="private_key" rows="2" th:text="${wallet.privateKey}" readonly></textarea>
+
+        <h4>Address</h4>
+        <textarea id="address" rows="1" th:text="${wallet.address}" readonly></textarea>
+
         <!-- Send function will be inactive only in the case of miner, because miner account will be published for demo.-->
         <!-- <div th:unless="${wallet.isMine}"> -->
         <div>
             <div>
-                <h2>send money</h2>
+                <h1>send money</h1>
                 <div>
-                    Address: <input id="recipient_address" size="90" type="text">
-                    <br>
-                    Amount: <input id="send_amount" type="number">
-                    <br>
-                    <button id="send_money_button">Send</button>
+                    <label>Address</label>
+                    <input id="recipient_address" size="90" type="text">
+
+                    <label>Amount</label>
+                    <input id="send_amount" type="number">
+
+                    <button id="send_money_button" style="margin-top: 10px;">Send</button>
                 </div>
             </div>
         </div>

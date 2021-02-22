@@ -3,6 +3,7 @@
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
     <head>
         <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
         <title>Login </title>
     </head>
     <body>
@@ -13,10 +14,12 @@
         <div th:if="${param.logout}">
             You have been logged out.
         </div>
-        <form th:action="@{/login}" method="post">
-            <div><label> User Name : <input type="text" name="username"/> </label></div>
-            <div><label> Password: <input type="password" name="password"/> </label></div>
-            <div><input type="submit" value="Log In"/></div>
+        <form th:action="@{/login}" method="post" style="margin-top: 20px;">
+            <label>User Name</label>
+            <input type="text" name="username"/>
+            <label>Password</label>
+            <input type="password" name="password"/>
+            <input type="submit" value="Log In" style="margin-top: 15px;"/>
         </form>
         <p>Click <a th:href="@{/signup}">here</a> to Sign up.</p>
     </body>

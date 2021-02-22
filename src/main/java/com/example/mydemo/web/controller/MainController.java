@@ -4,11 +4,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import com.example.mydemo.config.BlockchainServerProperties;
+import com.example.mydemo.domain.service.WalletService;
 import com.example.mydemo.util.StringUtil;
 import com.example.mydemo.web.model.TransactionForm;
 import com.example.mydemo.web.model.TransactionRequest;
 import com.example.mydemo.web.model.Wallet;
-import com.example.mydemo.web.service.WalletService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -44,6 +44,11 @@ public class MainController {
     public String home(Authentication auth, Model model) {
         var user = (User) auth.getPrincipal();
         var walletList = walletService.findByUsername(user.getUsername());
+        for (var wallet: walletList) {
+            var resp = balance(wallet.getAddress());
+            var balance = StringUtil.valueInJson(resp.getBody(), "balance");
+            wallet.setBalance(Float.parseFloat(balance));
+        }
         model.addAttribute("walletList", walletList);
         return "home";
     }
@@ -66,7 +71,7 @@ public class MainController {
         }
         var newWallet = Wallet.create(name);
 
-        // for demo (purchase 100): start
+        ////////// for demo //////////
         try {
             var client = new RestTemplate(new SimpleClientHttpRequestFactory());
             var headers = new HttpHeaders();
@@ -76,7 +81,7 @@ public class MainController {
             var queryURI = UriComponentsBuilder
                 .fromUri(uri)
                 .queryParam("address", newWallet.getAddress())
-                .queryParam("value", Float.toString(100f))
+                .queryParam("value", Float.toString(1000f))
                 .build().encode().toUri();
             var req = new RequestEntity<>(headers, HttpMethod.POST, queryURI);
             client.exchange(req, String.class);
@@ -85,7 +90,7 @@ public class MainController {
             e.printStackTrace();
             return StringUtil.messageJson("Falied");
         }
-        // for demo: end
+        //////////////////////////////
 
         walletService.save(user.getUsername(), newWallet);
         return StringUtil.messageJson("Created!");

@@ -1,6 +1,6 @@
 package com.example.mydemo.config;
 
-import com.example.mydemo.web.service.UserService;
+import com.example.mydemo.domain.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -23,17 +23,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity
 			.authorizeRequests()
-				.antMatchers("/", "/index")
-				.permitAll()
+				.mvcMatchers("/", "/signup").permitAll()
 				.anyRequest().authenticated()
-				.and()
+			.and()
 			.formLogin()
 				.loginPage("/login")
-				// .successForwardUrl("/home") why error??
+				.defaultSuccessUrl("/home")
 				.permitAll()
-				.and()
+			.and()
 			.logout()
-				.permitAll();
+				.invalidateHttpSession(true)
+				.deleteCookies("JESSIONID")
+				.logoutSuccessUrl("/login");
 	}
 
 	@Override

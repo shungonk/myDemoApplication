@@ -5,6 +5,7 @@
         <meta charset="UTF-8">
         <meta name="_csrf" th:content="${_csrf.token}"/>
         <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
         <title>Home</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script>
@@ -57,13 +58,22 @@
     <body>
         <h1 th:inline="text">Hello, [[${#httpServletRequest.remoteUser}]]</h1>
         <form th:action="@{/logout}" method="post">
-            <input type="submit" value="Sign Out" style="margin-bottom: 20px;"/>
+            <input type="submit" value="Sign Out" style="margin-bottom: 20px; margin-top: 25px;"/>
         </form>
 
-        <div th:each="wallet : ${walletList}">
-            <span th:text="${wallet.name}"></span>
-            <a href="/wallet" th:href="@{/wallet(name=${wallet.name})}">Enter</a>
-        </div>
-        <input id="new_wallet" type="submit" value="New Wallet" style="margin-top: 10px;margin-bottom: 20px;"/>
+        <table>
+            <thead>
+                <tr>
+                    <th>Your Wallets</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="wallet : ${walletList}">
+                    <td><a href="/wallet" th:href="@{/wallet(name=${wallet.name})}" th:text="${wallet.name}">wallet</a></td>
+                    <td th:text="${wallet.balance}" style="text-align: right;"></td>
+                    <td th:text="${wallet.isMine} ? 'Miner' : ''" style="text-align: center;"></td>
+                </tr>
+            </tbody>
+        </table>
+        <input id="new_wallet" type="submit" value="New Wallet" style="margin-top: 25px;"/>
     </body>
-</html>

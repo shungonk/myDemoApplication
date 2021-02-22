@@ -18,6 +18,7 @@ public class Wallet {
     private String privateKey;
     private String publicKey;
     private boolean mine;
+    private float balance;
 
     public Wallet(String name, String address, String privateKey, String publicKey, boolean mine) {
         this.name = name;
@@ -54,6 +55,14 @@ public class Wallet {
 
     public boolean isMine() {
         return mine;
+    }
+
+    public float getBalance() {
+        return balance;
+    }
+
+    public void setBalance(float balance) {
+        this.balance = balance;
     }
 
     public static Wallet create(String name) {
