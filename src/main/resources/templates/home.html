@@ -69,9 +69,9 @@
             </thead>
             <tbody>
                 <tr th:each="wallet : ${walletList}">
-                    <td><a href="/wallet" th:href="@{/wallet(name=${wallet.name})}" th:text="${wallet.name}">wallet</a></td>
+                    <td th:text="${wallet.name}">>wallet</td>
                     <td th:text="${wallet.balance}" style="text-align: right;"></td>
-                    <td th:text="${wallet.isMine} ? 'Miner' : ''" style="text-align: center;"></td>
+                    <td style="text-align: center;"><a href="/wallet" th:href="@{/wallet(name=${wallet.name})}">Enter</a></td>
                 </tr>
             </tbody>
         </table>
