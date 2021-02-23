@@ -46,8 +46,10 @@ public class MainController {
         var walletList = walletService.findByUsername(user.getUsername());
         for (var wallet: walletList) {
             var resp = balance(wallet.getAddress());
-            var balance = StringUtil.valueInJson(resp.getBody(), "balance");
-            wallet.setBalance(Float.parseFloat(balance));
+            if (resp.getStatusCodeValue() == 200) {
+                var balance = StringUtil.valueInJson(resp.getBody(), "balance");
+                wallet.setBalance(Float.parseFloat(balance));
+            }
         }
         model.addAttribute("walletList", walletList);
         return "home";
@@ -71,7 +73,7 @@ public class MainController {
         }
         var newWallet = Wallet.create(name);
         ////////// for demo //////////
-        purchase(newWallet.getAddress(), 100f);
+        purchase(newWallet.getAddress(), 1000f);
         //////////////////////////////
         walletService.save(user.getUsername(), newWallet);
         return StringUtil.messageJson("Created!");

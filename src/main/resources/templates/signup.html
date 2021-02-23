@@ -16,7 +16,7 @@
         <h1>Sign Up</h1>
 
         <form th:action="@{/signup}" th:object="${signupForm}" method="post">
-            <p th:if="${UniqueConstraintViolation}"><em>Username already used.</em></p>
+            <p th:if="${UniqueConstraintViolation}"><em>Username already exists.</em></p>
             <p th:if="${signupError}"><em>Signup Error.</em></p>
 
             <p><label for="username">Username</label>

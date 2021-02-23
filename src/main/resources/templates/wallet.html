@@ -13,94 +13,90 @@
                 submit_token_to_ajaxheader();
                 load_balance();
                 // setInterval(load_balance, 4000);
-                
-                function submit_token_to_ajaxheader() {
-                    let token = $("meta[name='_csrf']").attr("content");
-                    let header = $("meta[name='_csrf_header']").attr("content");
-
-                    $(document).ajaxSend(function(e, xhr, options) {
-                        xhr.setRequestHeader(header, token);
-                    });
-                }
-
-                function load_balance() {
-                    let data = {'address': $('#address').val()}
-
-                    $.ajax({
-                        url: '/balance',
-                        type: 'GET',
-                        data: data,
-                    }).done(function(data, status, xhr) {
-                        let balance = data['balance'];
-                        $('#wallet_amount').text(balance);
-                    }).fail(function(xhr, status, error) {
-                        console.info('Get Balance Failed');
-                    });
-                }
-
-                $('#send_money_button').click(function () {
-                    let confirm_result = confirm('Are you sure to send?');
-                    if (confirm_result !== true) {
-                        alert('Canceled');
-                        return
-                    }
-
-                    let transaction_data = {
-                        'senderPrivateKey': $('#private_key').val(),
-                        'senderPublicKey': $('#public_key').val(),
-                        'senderAddress': $('#address').val(),
-                        'recipientAddress': $('#recipient_address').val(),
-                        'value': $('#send_amount').val(),
-                    };
-
-                    if (transaction_data.senderAddress == transaction_data.recipientAddress) {
-                        alert('Same address as yours');
-                        return;
-                    }
-
-                    $.ajax({
-                        url: '/transaction',
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify(transaction_data)
-                    }).done(function(data, status, xhr) {
-                        alert(data.message);
-                    }).fail(function(xhr, status, error) {
-                        alert('Send failed');
-                    });
-                });
-
-                $('#mining').click(function() {
-                    if (!confirm('Are you sure to mine?')) {
-                        alert('Canceled');
-                        return
-                    }
-
-                    $.ajax({
-                        url: '/mine',
-                        type: 'POST',
-                        data: {'address': $('#address').val()}
-                    }).done(function(data, status, xhr) {
-                        alert(data['message']);
-                    }).fail(function(xhr, status, error) {
-                        alert('Mining failed.');
-                    });
-                });
-
-                $('#reload_balance').click(function(){
-                    load_balance();
-                });
-
             })
+                
+            function submit_token_to_ajaxheader() {
+                let token = $("meta[name='_csrf']").attr("content");
+                let header = $("meta[name='_csrf_header']").attr("content");
+
+                $(document).ajaxSend(function(e, xhr, options) {
+                    xhr.setRequestHeader(header, token);
+                });
+            }
+
+            function load_balance() {
+                let data = {'address': $('#address').val()}
+
+                $.ajax({
+                    url: '/balance',
+                    type: 'GET',
+                    data: data,
+                }).done(function(data, status, xhr) {
+                    let balance = data['balance'];
+                    $('#wallet_amount').text(balance);
+                }).fail(function(xhr, status, error) {
+                    console.info('Get Balance Failed');
+                });
+            }
+
+            function send_money() {
+                let confirm_result = confirm('Are you sure to send?');
+                if (confirm_result !== true) {
+                    alert('Canceled');
+                    return
+                }
+
+                let transaction_data = {
+                    'senderPrivateKey': $('#private_key').val(),
+                    'senderPublicKey': $('#public_key').val(),
+                    'senderAddress': $('#address').val(),
+                    'recipientAddress': $('#recipient_address').val(),
+                    'value': $('#send_amount').val(),
+                };
+
+                if (transaction_data.senderAddress == transaction_data.recipientAddress) {
+                    alert('Same address as yours');
+                    return;
+                }
+
+                $.ajax({
+                    url: '/transaction',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(transaction_data)
+                }).done(function(data, status, xhr) {
+                    alert(data.message);
+                }).fail(function(xhr, status, error) {
+                    alert('Send failed');
+                });
+            }
+
+            function mining() {
+                if (!confirm('Are you sure to mine?')) {
+                    alert('Canceled');
+                    return
+                }
+
+                $.ajax({
+                    url: '/mine',
+                    type: 'POST',
+                    data: {'address': $('#address').val()}
+                }).done(function(data, status, xhr) {
+                    alert(data['message']);
+                }).fail(function(xhr, status, error) {
+                    alert('Mining failed.');
+                });
+            }
+
         </script>
     </head>
     <body>
         <h1 th:text="${wallet.name}">wallet</h1>
 
         <div id="wallet_amount" style="font-size:xx-large; margin: 20px 0px 15px 5px;">0.00</div>
-        <button id="reload_balance">Reload Balance</button>
-        <button id="home" onclick="location.href='./home'">Home</button>
-        <button id="mining">Mining</button>
+        <button id="reload_balance" onclick="load_balance()">Reload Balance</button>
+        <button id="mining" onclick="mining()">Mining</button>
+        <button id="home" onclick="location.href='./home'">Back</button>
 
         <details open> <summary>Private  Key</summary> <p th:text="${wallet.privateKey}"></p> </details>
         <details open> <summary>Public  Key</summary> <p th:text="${wallet.publicKey}"></p> </details>
@@ -117,12 +113,12 @@
             <h1>send money</h1>
             <div>
                 <label>Address</label>
-                <input id="recipient_address" type="text" size="40" autofocus="autofocus">
+                <input id="recipient_address" type="text" size="50" autofocus="autofocus">
 
                 <label>Amount</label>
                 <input id="send_amount" type="number">
 
-                <button id="send_money_button" style="margin-top: 10px;">Send</button>
+                <button id="send_money_button" style="margin-top: 10px;" onclick="send_money()">Send</button>
             </div>
         </div>
     </body>

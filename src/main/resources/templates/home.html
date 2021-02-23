@@ -11,48 +11,57 @@
         <script>
             $(function () {
                 submit_token_to_ajaxheader();
-
-                function submit_token_to_ajaxheader() {
-                    let token = $("meta[name='_csrf']").attr("content");
-                    let header = $("meta[name='_csrf_header']").attr("content");
-
-                    $(document).ajaxSend(function(e, xhr, options) {
-                        xhr.setRequestHeader(header, token);
-                    });
-                }
-
-                function new_wallet() {
-                    let pattern = /^[a-zA-Z0-9!-/:-@¥[-`{-~]{5,50}$/;
-                    var name;
-                    while (true) {
-                        name = prompt('Enter the name of your new wallet (within 5 to 50 byte chars).');
-                        if (name === null) return;
-                        if (name.match(pattern)) break;
-                    }
-
-                    if (!confirm(`Are you sure to create \'${name}\' ?`)) {
-                        alert('Canceled');
-                        return;
-                    }
-
-                    $.ajax({
-                        url: '/wallet/new',
-                        type: 'POST',
-                        data: {'name': name},
-                        async: false
-                    }).done(function(data, status, xhr) {
-                        alert(data['message']);
-                        location.href = '/home';
-                    }).fail(function(xhr, status, error) {
-                        alert('Create failed.');
-                    });
-                }
-
-                $('#new_wallet').click(function(){
-                    new_wallet();
-                });
-
             })
+
+            function submit_token_to_ajaxheader() {
+                let token = $("meta[name='_csrf']").attr("content");
+                let header = $("meta[name='_csrf_header']").attr("content");
+
+                $(document).ajaxSend(function(e, xhr, options) {
+                    xhr.setRequestHeader(header, token);
+                });
+            }
+
+            function disp_new_wallet_area(){
+                let area = document.getElementById("new_wallet_area");
+
+                if(area.style.display == "block"){
+                    area.style.display = "none";
+                }else{
+                    area.style.display = "block";
+                    document.getElementById("new_wallet_name").focus();
+                }
+            }
+
+            function create_wallet() {
+                let em = document.getElementById("message");
+                let pattern = /^[a-zA-Z0-9!-/:-@¥[-`{-~]{5,30}$/;
+                let name = String($("#new_wallet_name").val());
+
+                if (!name.match(pattern)) {
+                    em.textContent = "Size must be between 5 and 30, and each character must be alphanumeric or underscore (A-Za-z0-9_)";
+                    em.style.display = "block";
+                    return;
+                }
+
+                if (!confirm(`Are you sure to create \'${name}\' ?`)) {
+                    alert('Canceled');
+                    return;
+                }
+
+                $.ajax({
+                    url: '/wallet/new',
+                    type: 'POST',
+                    data: {'name': name},
+                    async: false
+                }).done(function(data, status, xhr) {
+                    alert(data['message']);
+                    location.href = '/home';
+                }).fail(function(xhr, status, error) {
+                    alert('Create failed.');
+                });
+            }
+
         </script>
     </head>
     <body>
@@ -62,17 +71,24 @@
         </form>
 
         <h2>Wallets</h2>
+        <p><span th:if="${walletList.size == 0}">No wallet</span>
         <table>
-            <tr th:if="${walletList.size == 0}">No wallet</tr>
-            <tr th:each="wallet : ${walletList}">
+            <tr th:each="wallet : ${walletList}" style="height: 50px;">
                 <td th:text="${wallet.name}"></td>
-                <td th:text="${wallet.balance}" style="text-align: right;"></td>
-                <td style="text-align: center;"><a href="/wallet" th:href="@{/wallet(name=${wallet.name})}">Enter</a></td>
+                <td th:text="${wallet.balance}" style="text-align: right; vertical-align: middle;"></td>
+                <td style="text-align: center; vertical-align: middle;"><a href="/wallet" th:href="@{/wallet(name=${wallet.name})}">Open</a></td>
             </tr>
-        </table>
+        </table></p>
+        
         <!-- New Wallet function will be inactive only in the case of miner, because miner account will be published for demo.-->
         <div th:unless="${!walletList.isEmpty and walletList.get(0).isMine}">
         <!-- <div> -->
-            <input id="new_wallet" type="submit" value="New Wallet" style="margin-top: 25px;"/>
+            <input type="button" value="New Wallet" onclick="disp_new_wallet_area()">
+            <div id="new_wallet_area" style="display: none;">
+                <p><label>wallet name</label>
+                <input id="new_wallet_name" type="text" size="30">
+                <em id="message" style="display: none; color:#F00;"></em></p>
+                <button id="create_wallet" onclick="create_wallet()">Create</button>
+            </div>
         </div>
     </body>

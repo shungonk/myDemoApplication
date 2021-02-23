@@ -14,13 +14,14 @@
         <div th:if="${param.logout}">
             You have been logged out.
         </div>
-        <form th:action="@{/login}" method="post" style="margin-top: 20px;">
-            <label>User Name</label>
-            <input type="text" name="username" size="35" autofocus="autofocus"/>
-            <label>Password</label>
-            <input type="password" name="password" size="35"/>
-            <input type="submit" value="Log In" style="margin-top: 15px;"/>
+        <form th:action="@{/login}" method="post">
+            <p><label>Username</label>
+            <input type="text" name="username" size="35" autofocus="autofocus"/></p>
+            <p><label>Password</label>
+            <input type="password" name="password" size="35"/></p>
+            <input type="submit" value="Log In"/>
         </form>
+
         <p>Click <a th:href="@{/signup}">here</a> to Sign up.</p>
     </body>
 </html>
