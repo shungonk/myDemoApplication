@@ -106,14 +106,18 @@
         <button id="home">Home</button>
         <button id="mining" th:if="${wallet.isMine}">Mining</button>
 
-        <h4>Public  Key</h4>
-        <textarea id="public_key" rows="2" th:text="${wallet.publicKey}" readonly></textarea>
-
         <h4>Private  Key</h4>
         <textarea id="private_key" rows="2" th:text="${wallet.privateKey}" readonly></textarea>
 
+        <h4>Public  Key</h4>
+        <textarea id="public_key" rows="2" th:text="${wallet.publicKey}" readonly></textarea>
+
         <h4>Address</h4>
         <textarea id="address" rows="1" th:text="${wallet.address}" readonly></textarea>
+
+        <!-- <details open> <summary>Private  Key</summary> <p id="private_key" th:text="${wallet.privateKey}"></p> </details>
+        <details open> <summary>Public  Key</summary> <p id="public_key" th:text="${wallet.publicKey}"></p> </details>
+        <details open> <summary>Address</summary> <p id="address" th:text="${wallet.address}"></p> </details> -->
 
         <!-- Send function will be inactive only in the case of miner, because miner account will be published for demo.-->
         <!-- <div th:unless="${wallet.isMine}"> -->
@@ -122,7 +126,7 @@
                 <h1>send money</h1>
                 <div>
                     <label>Address</label>
-                    <input id="recipient_address" size="90" type="text">
+                    <input id="recipient_address" type="text" size="90" autofocus="autofocus">
 
                     <label>Amount</label>
                     <input id="send_amount" type="number">

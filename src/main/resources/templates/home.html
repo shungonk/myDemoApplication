@@ -22,10 +22,10 @@
                 }
 
                 function new_wallet() {
-                    let pattern = /^[a-zA-Z0-9!-/:-@¥[-`{-~]{1,50}$/;
+                    let pattern = /^[a-zA-Z0-9!-/:-@¥[-`{-~]{5,50}$/;
                     var name;
                     while (true) {
-                        name = prompt('Enter the name of your new wallet (within 50 byte chars).');
+                        name = prompt('Enter the name of your new wallet (within 5 to 50 byte chars).');
                         if (name === null) return;
                         if (name.match(pattern)) break;
                     }
@@ -61,19 +61,14 @@
             <input type="submit" value="Sign Out" style="margin-bottom: 20px; margin-top: 25px;"/>
         </form>
 
+        <h2>Your Wallets</h2>
         <table>
-            <thead>
-                <tr>
-                    <th>Your Wallets</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="wallet : ${walletList}">
-                    <td th:text="${wallet.name}">>wallet</td>
-                    <td th:text="${wallet.balance}" style="text-align: right;"></td>
-                    <td style="text-align: center;"><a href="/wallet" th:href="@{/wallet(name=${wallet.name})}">Enter</a></td>
-                </tr>
-            </tbody>
+            <tr th:if="${walletList.size == 0}">No wallet</tr>
+            <tr th:each="wallet : ${walletList}">
+                <td th:text="${wallet.name}"></td>
+                <td th:text="${wallet.balance}" style="text-align: right;"></td>
+                <td style="text-align: center;"><a href="/wallet" th:href="@{/wallet(name=${wallet.name})}">Enter</a></td>
+            </tr>
         </table>
         <input id="new_wallet" type="submit" value="New Wallet" style="margin-top: 25px;"/>
     </body>

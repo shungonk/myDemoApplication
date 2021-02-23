@@ -70,28 +70,9 @@ public class MainController {
             return StringUtil.messageJson("Error: Name Already Exists.");
         }
         var newWallet = Wallet.create(name);
-
         ////////// for demo //////////
-        try {
-            var client = new RestTemplate(new SimpleClientHttpRequestFactory());
-            var headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-            var uri = new URI(String.format("http://%s:%s/purchase",
-                bcsProperties.getHost(), bcsProperties.getPort()));
-            var queryURI = UriComponentsBuilder
-                .fromUri(uri)
-                .queryParam("address", newWallet.getAddress())
-                .queryParam("value", Float.toString(1000f))
-                .build().encode().toUri();
-            var req = new RequestEntity<>(headers, HttpMethod.POST, queryURI);
-            client.exchange(req, String.class);
-
-        } catch (URISyntaxException | RestClientException e) {
-            e.printStackTrace();
-            return StringUtil.messageJson("Falied");
-        }
+        purchase(newWallet.getAddress(), 100f);
         //////////////////////////////
-
         walletService.save(user.getUsername(), newWallet);
         return StringUtil.messageJson("Created!");
     }
@@ -193,4 +174,36 @@ public class MainController {
                 .body("External API Error");
         }
     }
+
+    ////////// for demo //////////
+    @ResponseBody
+    @PostMapping(value="/purchase")
+    public ResponseEntity<String> purchase(@RequestParam("address") String address, @RequestParam("value") float value) {
+        try {
+            var client = new RestTemplate(new SimpleClientHttpRequestFactory());
+            var headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            var uri = new URI(String.format("http://%s:%s/purchase",
+                bcsProperties.getHost(), bcsProperties.getPort()));
+            var queryURI = UriComponentsBuilder
+                .fromUri(uri)
+                .queryParam("address", address)
+                .queryParam("value", Float.toString(value))
+                .build().encode().toUri();
+            var req = new RequestEntity<>(headers, HttpMethod.POST, queryURI);
+            return client.exchange(req, String.class);
+
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Server Error");
+        } catch (RestClientException e) {
+            e.printStackTrace();
+            return ResponseEntity
+                .status(HttpStatus.BAD_GATEWAY)
+                .body("External API Error");
+        }
+    }
+    //////////////////////////////
 }

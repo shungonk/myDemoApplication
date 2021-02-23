@@ -19,6 +19,13 @@
 	<dependencies>
 
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+			<version>2.4.3</version>
+		</dependency>
+
+
+		<dependency>
 			<groupId>org.bitcoinj</groupId>
 			<artifactId>bitcoinj-core</artifactId>
 			<version>0.15.10</version>

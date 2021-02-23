@@ -6,20 +6,28 @@
     <head>
         <title>Sign Up</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+        <style>
+            em {
+                color:#F00;
+            }
+        </style>
     </head>
     <body>
         <h1>Sign Up</h1>
 
-        <div>
-            <label>User Name</label> 
-            <input id="username" type="text">
-            <label>Password</label>
-            <input id="passward" type="password">
-            <label>Confirm Password</label>
-            <input id="confirm_passward" type="password">
-            <br>
-            <button id="sign_up_button">Sign Up</button>
-            <button type="button" onclick="history.back()">Back</button>
-        </div>
+        <form th:action="@{/signup}" th:object="${signupForm}" method="post">
+            <p th:if="${UniqueConstraintViolation}"><em>Username already used.</em></p>
+            <p th:if="${signupError}"><em>Signup Error.</em></p>
+
+            <p><label for="username">Username</label>
+               <input type="text" th:field="*{username}" size="35" autofocus="autofocus"/>
+               <em th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username Error</em></p>
+            <p><label for="password">Password</label>
+               <input type="password" th:field="*{password}" size="35"/>
+               <em th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</em></p>
+            <p><input type="submit" value="Sign up"/></p>
+        </form>
+
+        <p>Click <a th:href="@{/login}">here</a> to Back to Log in.</p>
     </body>
 </html>
