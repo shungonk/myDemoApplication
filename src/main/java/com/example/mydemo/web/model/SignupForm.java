@@ -4,7 +4,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 public class SignupForm {
-    @Size(min=8, max=30, message="Size must be between 8 and 30")
+    @Size(min=4, max=30, message="Size must be between 4 and 30")
     @Pattern(regexp="^\\w*$", message="Each character must be alphanumeric or underscore (A-Za-z0-9_)")
     private String username;
 
