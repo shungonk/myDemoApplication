@@ -61,7 +61,7 @@
             <input type="submit" value="Sign Out" style="margin-bottom: 20px; margin-top: 25px;"/>
         </form>
 
-        <h2>Your Wallets</h2>
+        <h2>Wallets</h2>
         <table>
             <tr th:if="${walletList.size == 0}">No wallet</tr>
             <tr th:each="wallet : ${walletList}">
