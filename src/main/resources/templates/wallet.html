@@ -91,10 +91,6 @@
                     load_balance();
                 });
 
-                $('#home').click(function() {
-                    location.href = '/home';
-                });
-
             })
         </script>
     </head>
@@ -103,8 +99,8 @@
 
         <div id="wallet_amount" style="font-size:xx-large; margin: 20px 0px 15px 5px;">0.00</div>
         <button id="reload_balance">Reload Balance</button>
-        <button id="home">Home</button>
-        <button id="mining" th:if="${wallet.isMine}">Mining</button>
+        <button id="home" onclick="location.href='./home'">Home</button>
+        <button id="mining">Mining</button>
 
         <details open> <summary>Private  Key</summary> <p th:text="${wallet.privateKey}"></p> </details>
         <details open> <summary>Public  Key</summary> <p th:text="${wallet.publicKey}"></p> </details>
@@ -116,8 +112,8 @@
         <input type="hidden" id="address" th:value="${wallet.address}">
 
         <!-- Send function will be inactive only in the case of miner, because miner account will be published for demo.-->
-        <!-- <div th:unless="${wallet.isMine}"> -->
-        <div>
+        <div th:unless="${wallet.isMine}">
+        <!-- <div> -->
             <h1>send money</h1>
             <div>
                 <label>Address</label>

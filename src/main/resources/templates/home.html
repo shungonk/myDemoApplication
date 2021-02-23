@@ -70,5 +70,9 @@
                 <td style="text-align: center;"><a href="/wallet" th:href="@{/wallet(name=${wallet.name})}">Enter</a></td>
             </tr>
         </table>
-        <input id="new_wallet" type="submit" value="New Wallet" style="margin-top: 25px;"/>
+        <!-- New Wallet function will be inactive only in the case of miner, because miner account will be published for demo.-->
+        <div th:unless="${walletList.get(0).isMine}">
+        <!-- <div> -->
+            <input id="new_wallet" type="submit" value="New Wallet" style="margin-top: 25px;"/>
+        </div>
     </body>
