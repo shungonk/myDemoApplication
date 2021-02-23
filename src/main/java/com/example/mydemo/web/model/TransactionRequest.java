@@ -1,14 +1,10 @@
 package com.example.mydemo.web.model;
 
-import java.io.Serializable;
-
 import com.example.mydemo.util.SecurityUtil;
-import com.google.gson.Gson;
+import com.example.mydemo.util.StringUtil;
 import com.google.gson.GsonBuilder;
 
-public class TransactionRequest implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+public class TransactionRequest {
 
     private String senderPublicKey;
     private String senderAddress;
@@ -64,7 +60,7 @@ public class TransactionRequest implements Serializable {
     }
 
     public String marshalJson() {
-        return new Gson().toJson(this);
+        return StringUtil.toJson(this);
     }
 
     public String marshalJsonPrettyPrinting() {
@@ -73,7 +69,7 @@ public class TransactionRequest implements Serializable {
     }
 
     public static TransactionRequest fromJson(String json) {
-        return new Gson().fromJson(json, TransactionRequest.class);
+        return StringUtil.fromJson(json, TransactionRequest.class);
     }
     
 }
