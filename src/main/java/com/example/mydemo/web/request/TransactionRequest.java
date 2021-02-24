@@ -1,4 +1,4 @@
-package com.example.mydemo.web.model;
+package com.example.mydemo.web.request;
 
 import com.example.mydemo.util.SecurityUtil;
 import com.example.mydemo.util.StringUtil;

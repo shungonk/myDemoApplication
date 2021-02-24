@@ -95,7 +95,7 @@
 
         <div id="wallet_amount" style="font-size:xx-large; margin: 20px 0px 15px 5px;">0.00</div>
         <button id="reload_balance" onclick="load_balance()">Reload Balance</button>
-        <button id="mining" onclick="mining()">Mining</button>
+        <button id="mining" th:if="${wallet.isMine}" onclick="mining()">Mining</button>
         <button id="home" onclick="location.href='./home'">Back</button>
 
         <details open> <summary>Private  Key</summary> <p th:text="${wallet.privateKey}"></p> </details>

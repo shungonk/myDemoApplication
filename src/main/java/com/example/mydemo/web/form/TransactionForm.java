@@ -1,4 +1,4 @@
-package com.example.mydemo.web.model;
+package com.example.mydemo.web.form;
 
 import com.example.mydemo.util.SecurityUtil;
 

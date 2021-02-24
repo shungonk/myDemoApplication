@@ -1,4 +1,4 @@
-package com.example.mydemo.web.model;
+package com.example.mydemo.web.form;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;

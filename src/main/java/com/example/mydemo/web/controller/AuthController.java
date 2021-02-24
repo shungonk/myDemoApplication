@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import com.example.mydemo.domain.service.UserService;
-import com.example.mydemo.web.model.SignupForm;
+import com.example.mydemo.web.form.SignupForm;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;

@@ -5,10 +5,12 @@ import java.net.URISyntaxException;
 
 import com.example.mydemo.config.BlockchainServerProperties;
 import com.example.mydemo.domain.service.WalletService;
+import com.example.mydemo.util.SecurityUtil;
 import com.example.mydemo.util.StringUtil;
-import com.example.mydemo.web.model.TransactionForm;
-import com.example.mydemo.web.model.TransactionRequest;
+import com.example.mydemo.web.form.TransactionForm;
 import com.example.mydemo.web.model.Wallet;
+import com.example.mydemo.web.request.PurchaseRequest;
+import com.example.mydemo.web.request.TransactionRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -73,7 +75,12 @@ public class MainController {
         }
         var newWallet = Wallet.create(name);
         ////////// for demo //////////
-        purchase(newWallet.getAddress(), 1000f);
+        var value = 1000f;
+        purchase(new PurchaseRequest(
+            newWallet.getPublicKey(), 
+            newWallet.getAddress(), 
+            value,
+            SecurityUtil.createEcdsaSign(newWallet.getPrivateKey(), newWallet.getAddress() + Float.toString(value))));
         //////////////////////////////
         walletService.save(user.getUsername(), newWallet);
         return StringUtil.messageJson("Created!");
@@ -118,13 +125,6 @@ public class MainController {
 			form.getValue(),
 			form.generateSignature());
 
-        if (!transaction.validateTransactionRequest()) {
-            return ResponseEntity
-                .status(HttpStatus.OK)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(StringUtil.messageJson("Invalid input"));
-        }
-
         try {
             var client = new RestTemplate(new SimpleClientHttpRequestFactory());
             var uri = new URI(String.format("http://%s:%s/transaction",
@@ -148,6 +148,7 @@ public class MainController {
         }
     }
 
+    ////////// for demo //////////
     @ResponseBody
     @PostMapping(value="/mine")
     public ResponseEntity<String> mine(@RequestParam("address") String address) {
@@ -176,24 +177,20 @@ public class MainController {
                 .body("External API Error");
         }
     }
+    //////////////////////////////
 
-    ////////// for demo //////////
-    @ResponseBody
-    @PostMapping(value="/purchase")
-    public ResponseEntity<String> purchase(@RequestParam("address") String address, @RequestParam("value") float value) {
+    public ResponseEntity<String> purchase(PurchaseRequest purchase) {
         try {
             var client = new RestTemplate(new SimpleClientHttpRequestFactory());
             var headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             var uri = new URI(String.format("http://%s:%s/purchase",
                 bcsProperties.getHost(), bcsProperties.getPort()));
-            var queryURI = UriComponentsBuilder
-                .fromUri(uri)
-                .queryParam("address", address)
-                .queryParam("value", Float.toString(value))
-                .build().encode().toUri();
-            var req = new RequestEntity<>(headers, HttpMethod.POST, queryURI);
-            return client.exchange(req, String.class);
+            var request = RequestEntity
+                .post(uri)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(purchase.marshalJson());
+            return client.exchange(request, String.class);
 
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -207,5 +204,4 @@ public class MainController {
                 .body("External API Error");
         }
     }
-    //////////////////////////////
 }
