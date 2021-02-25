@@ -47,9 +47,9 @@ public class MainController {
         var user = (User) auth.getPrincipal();
         var walletList = walletService.findByUsername(user.getUsername());
         for (var wallet: walletList) {
-            var resp = balance(wallet.getAddress());
-            if (resp.getStatusCodeValue() == 200) {
-                var balance = StringUtil.valueInJson(resp.getBody(), "balance");
+            var res = balance(wallet.getAddress());
+            if (res.getStatusCodeValue() == 200) {
+                var balance = StringUtil.valueInJson(res.getBody(), "balance");
                 wallet.setBalance(Float.parseFloat(balance));
             }
         }
@@ -74,14 +74,18 @@ public class MainController {
             return StringUtil.messageJson("Error: Name Already Exists.");
         }
         var newWallet = Wallet.create(name);
-        ////////// for demo //////////
+
+        // purchase
         var value = 1000f;
-        purchase(new PurchaseRequest(
+        var res = purchase(new PurchaseRequest(
             newWallet.getPublicKey(), 
             newWallet.getAddress(), 
             value,
             SecurityUtil.createEcdsaSign(newWallet.getPrivateKey(), newWallet.getAddress() + Float.toString(value))));
-        //////////////////////////////
+        if (res.getStatusCodeValue() != 200) {
+            return StringUtil.messageJson("Error: Create failed.");
+        }
+        
         walletService.save(user.getUsername(), newWallet);
         return StringUtil.messageJson("Created!");
     }

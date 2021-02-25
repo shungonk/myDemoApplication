@@ -35,7 +35,7 @@
                     let balance = data['balance'];
                     $('#wallet_amount').text(balance);
                 }).fail(function(xhr, status, error) {
-                    console.info('Get Balance Failed');
+                    alert('Get Balance Failed');
                 });
             }
 
