@@ -11,56 +11,64 @@
         <script>
             $(function () {
                 submit_token_to_ajaxheader();
+
+                function submit_token_to_ajaxheader() {
+                    let token = $("meta[name='_csrf']").attr("content");
+                    let header = $("meta[name='_csrf_header']").attr("content");
+
+                    $(document).ajaxSend(function(e, xhr, options) {
+                        xhr.setRequestHeader(header, token);
+                    });
+                }
+
+                function disp_new_wallet_area(){
+                    let area = document.getElementById("new_wallet_area");
+
+                    if(area.style.display == "block"){
+                        area.style.display = "none";
+                    }else{
+                        area.style.display = "block";
+                        document.getElementById("new_wallet_name").focus();
+                    }
+                }
+
+                function create_wallet() {
+                    let em = document.getElementById("message");
+                    let pattern = /^[a-zA-Z0-9!-/:-@¥[-`{-~]{5,30}$/;
+                    let name = String($("#new_wallet_name").val());
+
+                    if (!name.match(pattern)) {
+                        em.textContent = "Size must be between 5 and 30, and each character must be alphanumeric or underscore (A-Za-z0-9_)";
+                        em.style.display = "block";
+                        return;
+                    }
+
+                    if (!confirm(`Are you sure to create \'${name}\' ?`)) {
+                        alert('Canceled');
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '/wallet/new',
+                        type: 'POST',
+                        data: {'name': name},
+                        async: false
+                    }).done(function(data, status, xhr) {
+                        alert(data['message']);
+                        location.href = '/home';
+                    }).fail(function(xhr, status, error) {
+                        alert('Create failed.');
+                    });
+                }
+
+                $('#disp_new_wallet_area').click(function(){
+                    disp_new_wallet_area();
+                });
+                
+                $('#create_wallet').click(function(){
+                    create_wallet();
+                });
             })
-
-            function submit_token_to_ajaxheader() {
-                let token = $("meta[name='_csrf']").attr("content");
-                let header = $("meta[name='_csrf_header']").attr("content");
-
-                $(document).ajaxSend(function(e, xhr, options) {
-                    xhr.setRequestHeader(header, token);
-                });
-            }
-
-            function disp_new_wallet_area(){
-                let area = document.getElementById("new_wallet_area");
-
-                if(area.style.display == "block"){
-                    area.style.display = "none";
-                }else{
-                    area.style.display = "block";
-                    document.getElementById("new_wallet_name").focus();
-                }
-            }
-
-            function create_wallet() {
-                let em = document.getElementById("message");
-                let pattern = /^[a-zA-Z0-9!-/:-@¥[-`{-~]{5,30}$/;
-                let name = String($("#new_wallet_name").val());
-
-                if (!name.match(pattern)) {
-                    em.textContent = "Size must be between 5 and 30, and each character must be alphanumeric or underscore (A-Za-z0-9_)";
-                    em.style.display = "block";
-                    return;
-                }
-
-                if (!confirm(`Are you sure to create \'${name}\' ?`)) {
-                    alert('Canceled');
-                    return;
-                }
-
-                $.ajax({
-                    url: '/wallet/new',
-                    type: 'POST',
-                    data: {'name': name},
-                    async: false
-                }).done(function(data, status, xhr) {
-                    alert(data['message']);
-                    location.href = '/home';
-                }).fail(function(xhr, status, error) {
-                    alert('Create failed.');
-                });
-            }
 
         </script>
     </head>
@@ -83,12 +91,12 @@
         <!-- New Wallet function will be inactive only in the case of miner, because miner account will be published for demo.-->
         <div th:unless="${!walletList.isEmpty and walletList.get(0).isMine}">
         <!-- <div> -->
-            <input type="button" value="New Wallet" onclick="disp_new_wallet_area()">
+            <button id="disp_new_wallet_area">New Wallet</button>
             <div id="new_wallet_area" style="display: none;">
                 <p><label>wallet name</label>
                 <input id="new_wallet_name" type="text" size="30">
                 <em id="message" style="display: none; color:#F00;"></em></p>
-                <button id="create_wallet" onclick="create_wallet()">Create</button>
+                <button id="create_wallet">Create</button>
             </div>
         </div>
     </body>
