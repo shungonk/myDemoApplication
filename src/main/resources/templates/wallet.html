@@ -54,7 +54,7 @@
                     };
 
                     if (transaction_data.senderAddress == transaction_data.recipientAddress) {
-                        alert('Same address as yours');
+                        alert('Failed: sender and recipient are same.');
                         return;
                     }
 
@@ -105,7 +105,10 @@
     <body>
         <h1 th:text="${wallet.name}">wallet</h1>
 
-        <div id="wallet_amount" style="font-size:xx-large; margin: 20px 0px 15px 5px;">0.00</div>
+        <p style="font-size:xx-large; margin: 20px 0px 15px 5px;">
+            <span id="wallet_amount" th:text="${wallet.getBalanceStr}">0.00</span><span> SBC</span>
+        </p>
+        
         <button id="reload_balance">Reload Balance</button>
         <button id="mining" th:if="${wallet.isMine}">Mining</button>
         <button id="home" onclick="location.href='./home'">Back</button>

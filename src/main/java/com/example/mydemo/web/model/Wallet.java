@@ -13,7 +13,7 @@ public class Wallet {
     private String privateKey;
     private String publicKey;
     private boolean mine;
-    private float balance;
+    private String balanceStr;
 
     public Wallet(String name, String address, String privateKey, String publicKey, boolean mine) {
         this.name = name;
@@ -52,12 +52,12 @@ public class Wallet {
         return mine;
     }
 
-    public float getBalance() {
-        return balance;
+    public String getBalanceStr() {
+        return balanceStr;
     }
 
-    public void setBalance(float balance) {
-        this.balance = balance;
+    public void setBalanceStr(String balanceStr) {
+        this.balanceStr = balanceStr;
     }
 
     public static Wallet create(String name) {
