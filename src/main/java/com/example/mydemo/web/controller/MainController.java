@@ -1,5 +1,6 @@
 package com.example.mydemo.web.controller;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -50,7 +51,7 @@ public class MainController {
             var res = balance(wallet.getAddress());
             var balanceStr = res.getStatusCodeValue() == 200
                 ? StringUtil.valueInJson(res.getBody(), "balance")
-                : "0.00";
+                : "0.000000";
             wallet.setBalanceStr(balanceStr);
         }
         model.addAttribute("walletList", walletList);
@@ -64,15 +65,15 @@ public class MainController {
         var res = balance(wallet.getAddress());
         var balanceStr = res.getStatusCodeValue() == 200
             ? StringUtil.valueInJson(res.getBody(), "balance")
-            : "0.00";
+            : "0.000000";
         wallet.setBalanceStr(balanceStr);
         model.addAttribute("wallet", wallet);
         return "wallet";
     }
 
     @ResponseBody
-    @PostMapping(value="/wallet/new", produces = "application/json")
-    public String walletNew(@RequestParam("name") String name, Authentication auth, Model model) {
+    @PostMapping(value="/wallet/new", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String createWallet(@RequestParam("name") String name, Authentication auth, Model model) {
         var user = (User) auth.getPrincipal();
         var count = walletService.countByNameAndUsername(name, user.getUsername());
         if (count != 0) {
@@ -81,13 +82,13 @@ public class MainController {
         var newWallet = Wallet.create(name);
 
         // purchase
-        var value = 50f;
+        var value = new BigDecimal("20.0");
         var res = purchase(new PurchaseRequest(
             newWallet.getPublicKey(), 
             newWallet.getAddress(), 
             value,
-            SecurityUtil.createEcdsaSign(newWallet.getPrivateKey(), newWallet.getAddress() + Float.toString(value))));
-        if (res.getStatusCodeValue() != 200) {
+            SecurityUtil.createEcdsaSign(newWallet.getPrivateKey(), newWallet.getAddress() + value.toPlainString())));
+        if (res.getStatusCodeValue() != 201) {
             return StringUtil.messageJson("Error: Create failed.");
         }
         
@@ -157,7 +158,6 @@ public class MainController {
         }
     }
 
-    ////////// for demo //////////
     @ResponseBody
     @PostMapping(value="/mine")
     public ResponseEntity<String> mine(@RequestParam("address") String address) {
@@ -186,7 +186,6 @@ public class MainController {
                 .body("External API Error");
         }
     }
-    //////////////////////////////
 
     public ResponseEntity<String> purchase(PurchaseRequest purchase) {
         try {

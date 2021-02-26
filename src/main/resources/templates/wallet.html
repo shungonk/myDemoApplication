@@ -105,8 +105,8 @@
     <body>
         <h1 th:text="${wallet.name}">wallet</h1>
 
-        <p style="font-size:xx-large; margin: 20px 0px 15px 5px;">
-            <span id="wallet_amount" th:text="${wallet.getBalanceStr}">0.00</span><span> SBC</span>
+        <p style="font-size:xx-large; margin: 20px 0px 15px 5px; font-variant-numeric: tabular-nums;">
+            <span id="wallet_amount" th:text="${wallet.getBalanceStr}">0.000000</span><span> SBC</span>
         </p>
         
         <button id="reload_balance">Reload Balance</button>

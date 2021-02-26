@@ -83,7 +83,7 @@
         <table style="width: 100%; font-size: large;">
             <tr th:each="wallet : ${walletList}" style="height: 50px;">
                 <td th:text="${wallet.name}" style="width: 40%;"></td>
-                <td style="text-align: right; vertical-align: middle; width: 40%;"><span th:text="${wallet.getBalanceStr}">0.00</span><span> SBC</span></td>
+                <td style="text-align: right; vertical-align: middle; width: 40%;font-variant-numeric: tabular-nums;"><span th:text="${wallet.getBalanceStr}">0.000000</span><span> SBC</span></td>
                 <td style="text-align: center; vertical-align: middle; width: 20%;"><a href="/wallet" th:href="@{/wallet(name=${wallet.name})}">Open</a></td>
             </tr>
         </table></p>
