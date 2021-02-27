@@ -23,7 +23,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity
 			.authorizeRequests()
-				.mvcMatchers("/", "/signup").permitAll()
+				.mvcMatchers("/", "/signup", "/error").permitAll()
 				.anyRequest().authenticated()
 			.and()
 			.formLogin()
@@ -34,7 +34,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.logout()
 				.invalidateHttpSession(true)
 				.deleteCookies("JESSIONID")
-				.logoutSuccessUrl("/login");
+				.logoutSuccessUrl("/login")
+				.permitAll();
 	}
 
 	@Override
