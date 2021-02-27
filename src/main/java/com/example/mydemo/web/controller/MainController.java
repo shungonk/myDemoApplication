@@ -201,8 +201,6 @@ public class MainController {
     public ResponseEntity<String> purchase(PurchaseRequest purchase) {
         try {
             var client = new RestTemplate(new SimpleClientHttpRequestFactory());
-            var headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             var uri = new URI(String.format("http://%s:%s/purchase",
                 bcsProperties.getHost(), bcsProperties.getPort()));
             var request = RequestEntity
