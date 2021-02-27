@@ -50,7 +50,6 @@ public class AuthController {
             request.login(signupForm.getUsername(), signupForm.getPassword());
         } catch (ServletException e) {
             e.printStackTrace();
-            // TODO: handle exception
         }
 
         return "redirect:/home";
