@@ -10,24 +10,40 @@
             em {
                 color:#F00;
             }
+            .container .box {
+                margin: 3px;
+                padding: 0 3px;
+            }
+            .flex{
+                display: flex;
+            }
+            .grow {
+                flex: 1 0 auto;
+            }
         </style>
     </head>
     <body>
-        <h1>Sign Up</h1>
+        <div class="container flex">
+            <div class="box grow"></div>
+            <div class="box">
+                <h1>Sign Up</h1>
 
-        <form th:action="@{/signup}" th:object="${signupForm}" method="post">
-            <p th:if="${UniqueConstraintViolation}"><em>Username already exists.</em></p>
-            <p th:if="${signupError}"><em>Signup Error.</em></p>
+                <form th:action="@{/signup}" th:object="${signupForm}" method="post">
+                    <p th:if="${UniqueConstraintViolation}"><em>Username already exists.</em></p>
+                    <p th:if="${signupError}"><em>Signup Error.</em></p>
 
-            <p><label for="username">Username</label>
-               <input type="text" th:field="*{username}" size="35" autofocus="autofocus"/>
-               <em th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username Error</em></p>
-            <p><label for="password">Password</label>
-               <input type="password" th:field="*{password}" size="35"/>
-               <em th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</em></p>
-            <p><input type="submit" value="Sign up"/></p>
-        </form>
+                    <p><label for="username">Username</label>
+                    <input type="text" th:field="*{username}" size="35" autofocus="autofocus"/>
+                    <em th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username Error</em></p>
+                    <p><label for="password">Password</label>
+                    <input type="password" th:field="*{password}" size="35"/>
+                    <em th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</em></p>
+                    <p><input type="submit" value="Sign up"/></p>
+                </form>
 
-        <p>Click <a th:href="@{/login}">here</a> to Back to Log in.</p>
+                <p>Click <a th:href="@{/login}">here</a> to Back to Log in.</p>
+            </div>
+            <div class="box grow"></div>
+        </div>
     </body>
 </html>

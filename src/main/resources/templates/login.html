@@ -5,23 +5,41 @@
         <meta charset="UTF-8">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
         <title>Login </title>
+        <style>
+            .container .box {
+                margin: 3px;
+                padding: 0 3px;
+            }
+            .flex{
+                display: flex;
+            }
+            .grow {
+                flex: 1 0 auto;
+            }
+        </style>
     </head>
     <body>
-        <h1>Login</h1>
-        <div th:if="${param.error}" style="color:#F00;">
-            Invalid username and password.
-        </div>
-        <div th:if="${param.logout}">
-            You have been logged out.
-        </div>
-        <form th:action="@{/login}" method="post">
-            <p><label>Username</label>
-            <input type="text" name="username" size="35" autofocus="autofocus"/></p>
-            <p><label>Password</label>
-            <input type="password" name="password" size="35"/></p>
-            <input type="submit" value="Log In"/>
-        </form>
+        <div class="container flex">
+            <div class="box grow"></div>
+            <div class="box">
+                <h1>Login</h1>
+                <div th:if="${param.error}" style="color:#F00;">
+                    Invalid username and password.
+                </div>
+                <div th:if="${param.logout}">
+                    You have been logged out.
+                </div>
+                <form th:action="@{/login}" method="post">
+                    <p><label>Username</label>
+                    <input type="text" name="username" size="35" autofocus="autofocus"/></p>
+                    <p><label>Password</label>
+                    <input type="password" name="password" size="35"/></p>
+                    <input type="submit" value="Log In"/>
+                </form>
 
-        <p>Click <a th:href="@{/signup}">here</a> to Sign up.</p>
+                <p>Click <a th:href="@{/signup}">here</a> to Sign up.</p>
+            </div>
+            <div class="box grow"></div>
+        </div>
     </body>
 </html>
