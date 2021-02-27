@@ -93,7 +93,7 @@ public class MainController {
         }
         
         walletService.save(user.getUsername(), newWallet);
-        return StringUtil.messageJson("Created!");
+        return StringUtil.messageJson("SUCCESS: Wallet created!");
     }
 
     @ResponseBody
