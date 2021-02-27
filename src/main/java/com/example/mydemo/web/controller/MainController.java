@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -49,10 +50,8 @@ public class MainController {
         var user = (User) auth.getPrincipal();
         var walletList = walletService.findByUsername(user.getUsername());
         for (var wallet: walletList) {
-            var res = balance(wallet.getAddress());
-            var balanceStr = res.getStatusCodeValue() == 200
-                ? StringUtil.valueInJson(res.getBody(), "balance")
-                : "0.000000";
+            var res = getBalance(wallet.getAddress());
+            var balanceStr = StringUtil.valueInJson(res.getBody(), "balance");
             wallet.setBalanceStr(balanceStr);
         }
         model.addAttribute("walletList", walletList);
@@ -63,10 +62,8 @@ public class MainController {
     public String wallet(@RequestParam("name") String name, Authentication auth, Model model) {
         var user = (User) auth.getPrincipal();
         var wallet = walletService.findByNameAndUsername(name, user.getUsername());
-        var res = balance(wallet.getAddress());
-        var balanceStr = res.getStatusCodeValue() == 200
-            ? StringUtil.valueInJson(res.getBody(), "balance")
-            : "0.000000";
+        var res = getBalance(wallet.getAddress());
+        var balanceStr = StringUtil.valueInJson(res.getBody(), "balance");
         wallet.setBalanceStr(balanceStr);
         model.addAttribute("wallet", wallet);
         return "wallet";
@@ -78,7 +75,7 @@ public class MainController {
         var user = (User) auth.getPrincipal();
         var count = walletService.countByNameAndUsername(name, user.getUsername());
         if (count != 0) {
-            return StringUtil.singleEntryJson("message", "Error: Name Already Exists.");
+            return StringUtil.singleEntryJson("message", "Error: Same Name Already Exists.");
         }
         var newWallet = Wallet.create(name);
 
@@ -96,38 +93,49 @@ public class MainController {
 
         var res = purchase(request);
         if (res.getStatusCodeValue() != 201) {
-            return StringUtil.singleEntryJson("message", "Error: Create failed.");
-        }
+            return StringUtil.singleEntryJson("message", "FAILED: Failed to create");
+        } 
         walletService.save(user.getUsername(), newWallet);
-        return StringUtil.singleEntryJson("message", "SUCCESS: Wallet created!");
+        return StringUtil.singleEntryJson("message", "SUCCESS: Created!");
     }
 
     @ResponseBody
     @GetMapping(value="/balance")
-    public ResponseEntity<String> balance(@RequestParam("address") String address) {
+    public ResponseEntity<String> getBalance(@RequestParam("address") String address) {
         try {
             var client = new RestTemplate(new SimpleClientHttpRequestFactory());
             var headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             var uri = new URI(String.format("http://%s:%s/balance",
                 bcsProperties.getHost(), bcsProperties.getPort()));
-            var queryURI = UriComponentsBuilder
+            var queryUri = UriComponentsBuilder
                 .fromUri(uri)
                 .queryParam("address", address)
                 .build().encode().toUri();
-            var req = new RequestEntity<>(headers, HttpMethod.GET, queryURI);
+            var req = new RequestEntity<>(headers, HttpMethod.GET, queryUri);
             return client.exchange(req, String.class);
 
+        } catch (HttpClientErrorException e) {
+            return ResponseEntity
+                .status(e.getStatusCode())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(e.getResponseBodyAsString());
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Server Error");
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(StringUtil.doubleEntryJson(
+                    "message", "ERROR: Internal Server Error",
+                    "balance", "0.000000"));
         } catch (RestClientException e) {
             e.printStackTrace();
             return ResponseEntity
                 .status(HttpStatus.BAD_GATEWAY)
-                .body("External API Error");
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(StringUtil.doubleEntryJson(
+                    "message", "ERROR: External API Error",
+                    "balance", "0.000000"));
         }
     }
 
@@ -156,16 +164,25 @@ public class MainController {
                 .body(transactionReq.marshalJson());
             return client.exchange(request, String.class);
 
+        } catch (HttpClientErrorException e) {
+            return ResponseEntity
+                .status(e.getStatusCode())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(e.getResponseBodyAsString());
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Server Error");
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(StringUtil.singleEntryJson(
+                    "message", "ERROR: Internal Server Error"));
         } catch (RestClientException e) {
             e.printStackTrace();
             return ResponseEntity
                 .status(HttpStatus.BAD_GATEWAY)
-                .body("External API Error");
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(StringUtil.singleEntryJson(
+                    "message", "ERROR: External API Error"));
         }
     }
 
@@ -185,16 +202,25 @@ public class MainController {
             var req = new RequestEntity<>(headers, HttpMethod.POST, queryURI);
             return client.exchange(req, String.class);
 
+        } catch (HttpClientErrorException e) {
+            return ResponseEntity
+                .status(e.getStatusCode())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(e.getResponseBodyAsString());
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Server Error");
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(StringUtil.singleEntryJson(
+                    "message", "ERROR: Internal Server Error"));
         } catch (RestClientException e) {
             e.printStackTrace();
             return ResponseEntity
                 .status(HttpStatus.BAD_GATEWAY)
-                .body("External API Error");
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(StringUtil.singleEntryJson(
+                    "message", "ERROR: External API Error"));
         }
     }
 
@@ -209,16 +235,25 @@ public class MainController {
                 .body(purchase.marshalJson());
             return client.exchange(request, String.class);
 
+        } catch (HttpClientErrorException e) {
+            return ResponseEntity
+                .status(e.getStatusCode())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(e.getResponseBodyAsString());
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Server Error");
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(StringUtil.singleEntryJson(
+                    "message", "ERROR: Internal Server Error"));
         } catch (RestClientException e) {
             e.printStackTrace();
             return ResponseEntity
                 .status(HttpStatus.BAD_GATEWAY)
-                .body("External API Error");
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(StringUtil.singleEntryJson(
+                    "message", "ERROR: External API Error"));
         }
     }
 }
