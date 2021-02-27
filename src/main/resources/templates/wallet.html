@@ -58,6 +58,12 @@
                         return;
                     }
 
+                    if (transaction_data.recipientAddress == null || transaction_data.recipientAddress == "" ||
+                        transaction_data.value == null || transaction_data.value <= 0) {
+                        alert('Falied: Fill in the blanks or value should be positive')
+                        return;
+                    }
+                    
                     $.ajax({
                         url: '/transaction',
                         type: 'POST',
