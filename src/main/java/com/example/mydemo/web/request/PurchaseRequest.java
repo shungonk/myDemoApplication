@@ -12,12 +12,14 @@ public class PurchaseRequest {
     private String address;   // recipient
     private BigDecimal value;
     private String signature;
+    private long timestamp;
 
-    public PurchaseRequest(String publicKey, String address, BigDecimal value, String signature) {
+    public PurchaseRequest(String publicKey, String address, BigDecimal value, long timestamp, String signature) {
         this.publicKey = publicKey;
         this.address = address;
         this.value = value;
         this.signature = signature;
+        this.timestamp = timestamp;
     }
 
     public String getPublicKey() {
@@ -36,11 +38,16 @@ public class PurchaseRequest {
         return signature;
     }
 
+    public long getTimestamp() {
+        return timestamp;
+    }
+
     public boolean validatePurchaseRequest() {
         if (publicKey == null || publicKey.isBlank() ||
             address == null || address.isBlank() ||
             value == null || value.equals(BigDecimal.ZERO) ||
-            signature == null || signature.isBlank()) {
+            signature == null || signature.isBlank() ||
+            timestamp == 0) {
             return false;
         }
         return true;
@@ -53,7 +60,7 @@ public class PurchaseRequest {
     public boolean verifySignature() {
         return SecurityUtil.verifyEcdsaSign(
             publicKey,
-            address + value.toPlainString(),
+            address + value.toPlainString() + Long.toString(timestamp),
             signature
             );
     }

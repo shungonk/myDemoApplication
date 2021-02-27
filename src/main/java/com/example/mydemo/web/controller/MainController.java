@@ -3,6 +3,7 @@ package com.example.mydemo.web.controller;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Instant;
 
 import com.example.mydemo.config.BlockchainServerProperties;
 import com.example.mydemo.domain.service.WalletService;
@@ -81,17 +82,22 @@ public class MainController {
         }
         var newWallet = Wallet.create(name);
 
-        // purchase
-        var value = new BigDecimal("20.0");
-        var res = purchase(new PurchaseRequest(
+        // create purchase request
+        var pvt = newWallet.getPrivateKey();
+        var timestamp = Instant.now().toEpochMilli();
+        var value = new BigDecimal("30");
+        var data = newWallet.getAddress() + value.toPlainString() + Long.toString(timestamp);
+        var request = new PurchaseRequest(
             newWallet.getPublicKey(), 
             newWallet.getAddress(), 
             value,
-            SecurityUtil.createEcdsaSign(newWallet.getPrivateKey(), newWallet.getAddress() + value.toPlainString())));
+            timestamp,
+            SecurityUtil.createEcdsaSign(pvt, data));
+
+        var res = purchase(request);
         if (res.getStatusCodeValue() != 201) {
             return StringUtil.messageJson("Error: Create failed.");
         }
-        
         walletService.save(user.getUsername(), newWallet);
         return StringUtil.messageJson("SUCCESS: Wallet created!");
     }
@@ -128,12 +134,17 @@ public class MainController {
     @ResponseBody
     @PostMapping(value="/transaction", consumes=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> sendTransaction(@RequestBody TransactionForm form) {
-		var transaction = new TransactionRequest(
-			form.getSenderPublicKey(), 
-			form.getSenderAddress(),
-			form.getRecipientAddress(),
-			form.getValue(),
-			form.generateSignature());
+        // create transaction request
+        var senderPvt = form.getSenderPrivateKey();
+        var timestamp = Instant.now().toEpochMilli();
+        var data = form.getSenderAddress() + form.getRecipientAddress() + form.getValue().toPlainString() + Long.toString(timestamp);
+        var transactionReq = new TransactionRequest(
+            form.getSenderPublicKey(), 
+            form.getSenderAddress(), 
+            form.getRecipientAddress(), 
+            form.getValue(),
+            timestamp,
+            SecurityUtil.createEcdsaSign(senderPvt, data));
 
         try {
             var client = new RestTemplate(new SimpleClientHttpRequestFactory());
@@ -142,7 +153,7 @@ public class MainController {
             var request = RequestEntity
                 .post(uri)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(transaction.marshalJson());
+                .body(transactionReq.marshalJson());
             return client.exchange(request, String.class);
 
         } catch (URISyntaxException e) {
