@@ -62,6 +62,9 @@ public class MainController {
     public String wallet(@RequestParam("name") String name, Authentication auth, Model model) {
         var user = (User) auth.getPrincipal();
         var wallet = walletService.findByNameAndUsername(name, user.getUsername());
+        if (wallet == null)
+            return home(auth, model);
+            
         var res = getBalance(wallet.getAddress());
         var balanceStr = StringUtil.valueInJson(res.getBody(), "balance");
         wallet.setBalanceStr(balanceStr);
