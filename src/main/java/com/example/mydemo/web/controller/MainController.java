@@ -78,7 +78,7 @@ public class MainController {
         var user = (User) auth.getPrincipal();
         var count = walletService.countByNameAndUsername(name, user.getUsername());
         if (count != 0) {
-            return StringUtil.messageJson("Error: Name Already Exists.");
+            return StringUtil.singleEntryJson("message", "Error: Name Already Exists.");
         }
         var newWallet = Wallet.create(name);
 
@@ -96,10 +96,10 @@ public class MainController {
 
         var res = purchase(request);
         if (res.getStatusCodeValue() != 201) {
-            return StringUtil.messageJson("Error: Create failed.");
+            return StringUtil.singleEntryJson("message", "Error: Create failed.");
         }
         walletService.save(user.getUsername(), newWallet);
-        return StringUtil.messageJson("SUCCESS: Wallet created!");
+        return StringUtil.singleEntryJson("message", "SUCCESS: Wallet created!");
     }
 
     @ResponseBody
