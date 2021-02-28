@@ -105,7 +105,7 @@ public class MainController {
 		var transactionReq = new TransactionRequest(
 			form.getSenderAddress(),
 			form.getRecipientAddress(),
-			form.getValue(),
+			form.getAmount(),
 			Instant.now().toEpochMilli());
 		transactionReq.signate(form.getSenderPrivateKey(), form.getSenderPublicKey());
 

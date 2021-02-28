@@ -1,5 +1,7 @@
 package com.example.mydemo.web.request;
 
+import java.security.GeneralSecurityException;
+
 import com.example.mydemo.util.SecurityUtil;
 import com.example.mydemo.util.StringUtil;
 import com.google.gson.GsonBuilder;
@@ -24,12 +26,21 @@ public abstract class SignatureRequest {
     public abstract boolean validateFields();
 
     public final void signate(String privateKey, String publicKey) {
-        this.publicKey = publicKey;
-        this.signature = SecurityUtil.createEcdsaSign(privateKey, getData());
+        try {
+            this.publicKey = publicKey;
+            this.signature = SecurityUtil.createEcdsaSign(privateKey, getData());
+        } catch (GeneralSecurityException e) {
+            // LogWriter.warning("Failed to create ECDSA signature");
+        }
     }
 
     public final boolean verifySignature() {
-        return SecurityUtil.verifyEcdsaSign(publicKey, getData(), signature);
+        try {
+            return SecurityUtil.verifyEcdsaSign(publicKey, getData(), signature);
+        } catch (GeneralSecurityException e) {
+            // LogWriter.warning("Failed to verity signature");
+            return false;
+        }
     }
 
     public String marshalJson() {

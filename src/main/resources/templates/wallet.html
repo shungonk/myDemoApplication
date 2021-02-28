@@ -48,7 +48,7 @@
                         'senderPublicKey': $('#public_key').val(),
                         'senderAddress': $('#address').val(),
                         'recipientAddress': $('#recipient_address').val(),
-                        'value': $('#send_amount').val(),
+                        'amount': $('#send_amount').val(),
                     };
 
                     if (transaction_data.senderAddress == transaction_data.recipientAddress) {
@@ -57,8 +57,8 @@
                     }
 
                     if (transaction_data.recipientAddress == null || transaction_data.recipientAddress == "" ||
-                        transaction_data.value == null || transaction_data.value <= 0) {
-                        alert('Falied: Fill in the blanks or value should be positive')
+                        transaction_data.amount == null || transaction_data.amount <= 0) {
+                        alert('Falied: Fill in the blanks or Amount should be positive')
                         return;
                     }
                     
@@ -76,7 +76,6 @@
 
                 function mining() {
                     if (!confirm('Are you sure to mine?')) {
-                        alert('Canceled');
                         return
                     }
 
