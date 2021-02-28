@@ -11,7 +11,6 @@
         <script>
             $(function () {
                 submit_token_to_ajaxheader();
-                load_balance();
                 // setInterval(load_balance, 4000);
 
                 function submit_token_to_ajaxheader() {
@@ -41,7 +40,6 @@
                 function send_money() {
                     let confirm_result = confirm('Are you sure to send?');
                     if (confirm_result !== true) {
-                        alert('Canceled');
                         return
                     }
 
@@ -70,9 +68,9 @@
                         contentType: 'application/json',
                         data: JSON.stringify(transaction_data)
                     }).done(function(data, status, xhr) {
-                        alert(data.message);
+                        alert(data['message']);
                     }).fail(function(xhr, status, error) {
-                        alert('Send failed');
+                        alert('Server Error');
                     });
                 }
 
@@ -89,7 +87,7 @@
                     }).done(function(data, status, xhr) {
                         alert(data['message']);
                     }).fail(function(xhr, status, error) {
-                        alert('Mining failed.');
+                        alert('Server Error');
                     });
                 }
                 

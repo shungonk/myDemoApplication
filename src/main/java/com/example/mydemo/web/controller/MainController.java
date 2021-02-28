@@ -2,12 +2,10 @@ package com.example.mydemo.web.controller;
 
 import java.math.BigDecimal;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.Instant;
 
 import com.example.mydemo.config.BlockchainServerProperties;
 import com.example.mydemo.domain.service.WalletService;
-import com.example.mydemo.util.SecurityUtil;
 import com.example.mydemo.util.StringUtil;
 import com.example.mydemo.web.form.TransactionForm;
 import com.example.mydemo.web.model.Wallet;
@@ -32,7 +30,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -50,7 +47,7 @@ public class MainController {
         var user = (User) auth.getPrincipal();
         var walletList = walletService.findByUsername(user.getUsername());
         for (var wallet: walletList) {
-            var res = getBalance(wallet.getAddress());
+            var res = requestBalance(wallet.getAddress());
             var balanceStr = StringUtil.valueInJson(res.getBody(), "balance");
             wallet.setBalanceStr(balanceStr);
         }
@@ -62,7 +59,7 @@ public class MainController {
     public String wallet(@RequestParam("name") String name, Authentication auth, Model model) {
         var user = (User) auth.getPrincipal();
         var wallet = walletService.findByNameAndUsername(name, user.getUsername());            
-        var res = getBalance(wallet.getAddress());
+        var res = requestBalance(wallet.getAddress());
         var balanceStr = StringUtil.valueInJson(res.getBody(), "balance");
         wallet.setBalanceStr(balanceStr);
         model.addAttribute("wallet", wallet);
@@ -80,19 +77,14 @@ public class MainController {
         var newWallet = Wallet.create(name);
 
         // create purchase request
-        var pvt = newWallet.getPrivateKey();
-        var timestamp = Instant.now().toEpochMilli();
-        var value = new BigDecimal("30");
-        var data = newWallet.getAddress() + value.toPlainString() + Long.toString(timestamp);
-        var request = new PurchaseRequest(
-            newWallet.getPublicKey(), 
+        var purchaseReq = new PurchaseRequest(
             newWallet.getAddress(), 
-            value,
-            timestamp,
-            SecurityUtil.createEcdsaSign(pvt, data));
+            new BigDecimal("30"), 
+            Instant.now().toEpochMilli());
+        purchaseReq.signate(newWallet.getPrivateKey(), newWallet.getPublicKey());
 
-        var res = purchase(request);
-        if (res.getStatusCodeValue() != 201) {
+        var res = requestPurchase(purchaseReq);
+        if (res.getStatusCode().isError()) {
             return StringUtil.singleEntryJson("message", "FAILED: Failed to create");
         } 
         walletService.save(user.getUsername(), newWallet);
@@ -100,8 +92,35 @@ public class MainController {
     }
 
     @ResponseBody
-    @GetMapping(value="/balance")
-    public ResponseEntity<String> getBalance(@RequestParam("address") String address) {
+    @GetMapping(value="/balance", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String balance(@RequestParam("address") String address) {
+        var res = requestBalance(address);
+        return res.getBody();
+    }
+
+    @ResponseBody
+    @PostMapping(value="/transaction", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String transaction(@RequestBody TransactionForm form) {
+        // create transaction request
+		var transactionReq = new TransactionRequest(
+			form.getSenderAddress(),
+			form.getRecipientAddress(),
+			form.getValue(),
+			Instant.now().toEpochMilli());
+		transactionReq.signate(form.getSenderPrivateKey(), form.getSenderPublicKey());
+
+        var res = requestTransaction(transactionReq);
+        return res.getBody();
+    }
+
+    @ResponseBody
+    @PostMapping(value="/mine", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String mine(@RequestParam("address") String address) {
+        var res = requestMine(address);
+        return res.getBody();
+    }
+
+    public ResponseEntity<String> requestBalance(String address) {
         try {
             var client = new RestTemplate(new SimpleClientHttpRequestFactory());
             var headers = new HttpHeaders();
@@ -120,40 +139,18 @@ public class MainController {
                 .status(e.getStatusCode())
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(e.getResponseBodyAsString());
-        } catch (URISyntaxException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(StringUtil.doubleEntryJson(
-                    "message", "ERROR: Internal Server Error",
-                    "balance", "0.000000"));
-        } catch (RestClientException e) {
-            e.printStackTrace();
-            return ResponseEntity
-                .status(HttpStatus.BAD_GATEWAY)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(StringUtil.doubleEntryJson(
-                    "message", "ERROR: External API Error",
+                    "message", "ERROR: Server Error",
                     "balance", "0.000000"));
         }
     }
 
-    @ResponseBody
-    @PostMapping(value="/transaction", consumes=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> sendTransaction(@RequestBody TransactionForm form) {
-        // create transaction request
-        var senderPvt = form.getSenderPrivateKey();
-        var timestamp = Instant.now().toEpochMilli();
-        var data = form.getSenderAddress() + form.getRecipientAddress() + form.getValue().toPlainString() + Long.toString(timestamp);
-        var transactionReq = new TransactionRequest(
-            form.getSenderPublicKey(), 
-            form.getSenderAddress(), 
-            form.getRecipientAddress(), 
-            form.getValue(),
-            timestamp,
-            SecurityUtil.createEcdsaSign(senderPvt, data));
-
+    public ResponseEntity<String> requestTransaction(TransactionRequest transactionReq) {
         try {
             var client = new RestTemplate(new SimpleClientHttpRequestFactory());
             var uri = new URI(String.format("http://%s:%s/transaction",
@@ -169,26 +166,43 @@ public class MainController {
                 .status(e.getStatusCode())
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(e.getResponseBodyAsString());
-        } catch (URISyntaxException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(StringUtil.singleEntryJson(
-                    "message", "ERROR: Internal Server Error"));
-        } catch (RestClientException e) {
-            e.printStackTrace();
-            return ResponseEntity
-                .status(HttpStatus.BAD_GATEWAY)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(StringUtil.singleEntryJson(
-                    "message", "ERROR: External API Error"));
+                    "message", "ERROR: Server Error"));
         }
     }
 
-    @ResponseBody
-    @PostMapping(value="/mine")
-    public ResponseEntity<String> mine(@RequestParam("address") String address) {
+    public ResponseEntity<String> requestPurchase(PurchaseRequest purchaseReq) {
+        try {
+            var client = new RestTemplate(new SimpleClientHttpRequestFactory());
+            var uri = new URI(String.format("http://%s:%s/purchase",
+                bcsProperties.getHost(), bcsProperties.getPort()));
+            var request = RequestEntity
+                .post(uri)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(purchaseReq.marshalJson());
+            return client.exchange(request, String.class);
+
+        } catch (HttpClientErrorException e) {
+            return ResponseEntity
+                .status(e.getStatusCode())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(e.getResponseBodyAsString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(StringUtil.singleEntryJson(
+                    "message", "ERROR: Server Error"));
+        }
+    }
+
+    public ResponseEntity<String> requestMine(String address) {
         try {
             var client = new RestTemplate(new SimpleClientHttpRequestFactory());
             var headers = new HttpHeaders();
@@ -207,53 +221,13 @@ public class MainController {
                 .status(e.getStatusCode())
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(e.getResponseBodyAsString());
-        } catch (URISyntaxException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(StringUtil.singleEntryJson(
-                    "message", "ERROR: Internal Server Error"));
-        } catch (RestClientException e) {
-            e.printStackTrace();
-            return ResponseEntity
-                .status(HttpStatus.BAD_GATEWAY)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(StringUtil.singleEntryJson(
-                    "message", "ERROR: External API Error"));
-        }
-    }
-
-    public ResponseEntity<String> purchase(PurchaseRequest purchase) {
-        try {
-            var client = new RestTemplate(new SimpleClientHttpRequestFactory());
-            var uri = new URI(String.format("http://%s:%s/purchase",
-                bcsProperties.getHost(), bcsProperties.getPort()));
-            var request = RequestEntity
-                .post(uri)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(purchase.marshalJson());
-            return client.exchange(request, String.class);
-
-        } catch (HttpClientErrorException e) {
-            return ResponseEntity
-                .status(e.getStatusCode())
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(e.getResponseBodyAsString());
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-            return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(StringUtil.singleEntryJson(
-                    "message", "ERROR: Internal Server Error"));
-        } catch (RestClientException e) {
-            e.printStackTrace();
-            return ResponseEntity
-                .status(HttpStatus.BAD_GATEWAY)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(StringUtil.singleEntryJson(
-                    "message", "ERROR: External API Error"));
+                    "message", "ERROR: Server Error"));
         }
     }
 }
