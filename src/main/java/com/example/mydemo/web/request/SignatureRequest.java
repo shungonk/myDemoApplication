@@ -43,11 +43,11 @@ public abstract class SignatureRequest {
         }
     }
 
-    public String marshalJson() {
+    public String toJson() {
         return StringUtil.toJson(this);
     }
 
-    public String marshalJsonPrettyPrinting() {
+    public String toJsonPrettyPrinting() {
         var gsonBuilder = new GsonBuilder().setPrettyPrinting().create();
         return gsonBuilder.toJson(this);
     }

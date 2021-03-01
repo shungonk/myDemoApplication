@@ -76,7 +76,7 @@ public class MainController {
         var user = (User) auth.getPrincipal();
         var count = walletService.countByNameAndUsername(name, user.getUsername());
         if (count != 0) {
-            return StringUtil.singleEntryJson("message", "Error: Same Name Already Exists.");
+            return StringUtil.makeJson("message", "Error: Same Name Already Exists.");
         }
         var newWallet = Wallet.create(name);
 
@@ -89,10 +89,10 @@ public class MainController {
 
         var res = requestPurchase(purchaseReq);
         if (res.getStatusCode().isError()) {
-            return StringUtil.singleEntryJson("message", "FAILED: Failed to create");
+            return StringUtil.makeJson("message", "FAILED: Failed to create");
         } 
         walletService.save(user.getUsername(), newWallet);
-        return StringUtil.singleEntryJson("message", "SUCCESS: Created!");
+        return StringUtil.makeJson("message", "SUCCESS: Created!");
     }
 
     @ResponseBody
@@ -156,7 +156,7 @@ public class MainController {
             return ResponseEntity
                 .status(HttpStatus.SERVICE_UNAVAILABLE)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(StringUtil.doubleEntryJson(
+                .body(StringUtil.makeJson(
                     "message", "ERROR: Server Error",
                     "balance", "0.000000"));
         }
@@ -170,7 +170,7 @@ public class MainController {
             var request = RequestEntity
                 .post(uri)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(transactionReq.marshalJson());
+                .body(transactionReq.toJson());
             return client.exchange(request, String.class);
 
         } catch (HttpClientErrorException e) {
@@ -183,7 +183,7 @@ public class MainController {
             return ResponseEntity
                 .status(HttpStatus.SERVICE_UNAVAILABLE)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(StringUtil.singleEntryJson(
+                .body(StringUtil.makeJson(
                     "message", "ERROR: Server Error"));
         }
     }
@@ -196,7 +196,7 @@ public class MainController {
             var request = RequestEntity
                 .post(uri)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(purchaseReq.marshalJson());
+                .body(purchaseReq.toJson());
             return client.exchange(request, String.class);
 
         } catch (HttpClientErrorException e) {
@@ -209,7 +209,7 @@ public class MainController {
             return ResponseEntity
                 .status(HttpStatus.SERVICE_UNAVAILABLE)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(StringUtil.singleEntryJson(
+                .body(StringUtil.makeJson(
                     "message", "ERROR: Server Error"));
         }
     }
@@ -238,7 +238,7 @@ public class MainController {
             return ResponseEntity
                 .status(HttpStatus.SERVICE_UNAVAILABLE)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(StringUtil.singleEntryJson(
+                .body(StringUtil.makeJson(
                     "message", "ERROR: Server Error"));
         }
     }
@@ -256,7 +256,7 @@ public class MainController {
             return ResponseEntity
                 .status(HttpStatus.SERVICE_UNAVAILABLE)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(StringUtil.singleEntryJson(
+                .body(StringUtil.makeJson(
                     "ERROR", "Server Error"));
         }
     }
