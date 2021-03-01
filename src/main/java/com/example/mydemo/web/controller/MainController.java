@@ -58,10 +58,14 @@ public class MainController {
     @GetMapping(value="/wallet")
     public String wallet(@RequestParam("name") String name, Authentication auth, Model model) {
         var user = (User) auth.getPrincipal();
-        var wallet = walletService.findByNameAndUsername(name, user.getUsername());            
-        var res = requestBalance(wallet.getAddress());
-        var balanceStr = StringUtil.valueInJson(res.getBody(), "balance");
+        var wallet = walletService.findByNameAndUsername(name, user.getUsername());         
+        // get balance   
+        var rspBalance = requestBalance(wallet.getAddress());
+        var balanceStr = StringUtil.valueInJson(rspBalance.getBody(), "balance");
         wallet.setBalanceStr(balanceStr);
+        // get information of blockchain
+        var rspInfo = requestInfo();
+        model.addAttribute("info", StringUtil.formatJson(rspInfo.getBody()));
         model.addAttribute("wallet", wallet);
         return "wallet";
     }
@@ -118,6 +122,14 @@ public class MainController {
     public String mine(@RequestParam("address") String address) {
         var res = requestMine(address);
         return res.getBody();
+    }
+
+    @ResponseBody
+    @GetMapping(value="/info")
+    public String info() {
+        var res = requestInfo();
+        var printInfo = StringUtil.formatJson(res.getBody());
+        return printInfo;
     }
 
     public ResponseEntity<String> requestBalance(String address) {
@@ -228,6 +240,24 @@ public class MainController {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(StringUtil.singleEntryJson(
                     "message", "ERROR: Server Error"));
+        }
+    }
+
+    public ResponseEntity<String> requestInfo() {
+        try {
+            var client = new RestTemplate(new SimpleClientHttpRequestFactory());
+            var uri = new URI(String.format("http://%s:%s/info",
+                bcsProperties.getHost(), bcsProperties.getPort()));
+            var req = RequestEntity.get(uri).build();
+            return client.exchange(req, String.class);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(StringUtil.singleEntryJson(
+                    "ERROR", "Server Error"));
         }
     }
 }

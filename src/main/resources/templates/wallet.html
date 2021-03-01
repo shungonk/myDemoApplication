@@ -11,7 +11,7 @@
         <script>
             $(function () {
                 submit_token_to_ajaxheader();
-                // setInterval(load_balance, 4000);
+                setInterval(load_balance, 10000);
 
                 function submit_token_to_ajaxheader() {
                     let token = $("meta[name='_csrf']").attr("content");
@@ -33,7 +33,7 @@
                         let balance = data['balance'];
                         $('#wallet_amount').text(balance);
                     }).fail(function(xhr, status, error) {
-                        alert('Get Balance Failed');
+                        // alert('Get Balance Failed');
                     });
                 }
 
@@ -89,10 +89,14 @@
                         alert('Server Error');
                     });
                 }
+
+                function show_info() {
+                    alert($('#info').val());
+                }
                 
-                $('#reload_balance').click(function(){
-                    load_balance();
-                });
+                // $('#reload_balance').click(function(){
+                //     load_balance();
+                // });
                 
                 $('#mining').click(function(){
                     mining();
@@ -100,6 +104,10 @@
                 
                 $('#send_money').click(function(){
                     send_money();
+                });
+                
+                $('#information').click(function(){
+                    show_info();
                 });
             })
 
@@ -112,8 +120,9 @@
             <span id="wallet_amount" th:text="${wallet.getBalanceStr}">0.000000</span><span> SBC</span>
         </p>
         
-        <button id="reload_balance">Reload Balance</button>
+        <!-- <button id="reload_balance">Reload Balance</button> -->
         <button id="mining" th:if="${wallet.isMine}">Mining</button>
+        <button id="information" >Information</button>
         <button id="home" onclick="location.href='./home'">Back</button>
 
         <details open> <summary>Private  Key</summary> <p th:text="${wallet.privateKey}"></p> </details>
@@ -124,6 +133,7 @@
         <input type="hidden" id="private_key" th:value="${wallet.privateKey}">
         <input type="hidden" id="public_key" th:value="${wallet.publicKey}">
         <input type="hidden" id="address" th:value="${wallet.address}">
+        <input type="hidden" id="info" th:value="${info}">
 
         <!-- Send function will be inactive only in the case of miner, because miner account will be published for demo.-->
         <div th:unless="${wallet.isMine}">
