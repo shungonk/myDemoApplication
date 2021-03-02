@@ -11,7 +11,7 @@
         <script>
             $(function () {
                 submit_token_to_ajaxheader();
-                setInterval(load_balance, 10000);
+                // setInterval(load_balance, 10000);
 
                 function submit_token_to_ajaxheader() {
                     let token = $("meta[name='_csrf']").attr("content");
@@ -51,14 +51,19 @@
                         'amount': $('#send_amount').val(),
                     };
 
-                    if (transaction_data.senderAddress == transaction_data.recipientAddress) {
-                        alert('Failed: sender and recipient are same.');
+                    if (transaction_data.recipientAddress == '') {
+                        alert('Falied: Fill in the blanks')
                         return;
                     }
 
-                    if (transaction_data.recipientAddress == null || transaction_data.recipientAddress == "" ||
-                        transaction_data.amount == null || transaction_data.amount <= 0) {
-                        alert('Falied: Fill in the blanks or Amount should be positive')
+                    var pattern = /^([1-9]\d*|0)(\.\d+)?$/;
+                    if (!pattern.test(transaction_data.amount)) {
+                        alert('Falied: Amount should be positive number')
+                        return;
+                    }
+
+                    if (transaction_data.senderAddress == transaction_data.recipientAddress) {
+                        alert('Failed: sender and recipient are same.');
                         return;
                     }
                     
@@ -94,19 +99,19 @@
                     alert($('#info').val());
                 }
                 
-                // $('#reload_balance').click(function(){
-                //     load_balance();
-                // });
+                $('#reload_button').click(function(){
+                    load_balance();
+                });
                 
-                $('#mining').click(function(){
+                $('#mining_button').click(function(){
                     mining();
                 });
                 
-                $('#send_money').click(function(){
+                $('#send_button').click(function(){
                     send_money();
                 });
                 
-                $('#information').click(function(){
+                $('#info_bottun').click(function(){
                     show_info();
                 });
             })
@@ -120,9 +125,9 @@
             <span id="wallet_amount" th:text="${wallet.getBalanceStr}">0.000000</span><span> SBC</span>
         </p>
         
-        <!-- <button id="reload_balance">Reload Balance</button> -->
-        <button id="mining" th:if="${wallet.isMine}">Mining</button>
-        <button id="information" >Information</button>
+        <button id="reload_button">Reload</button>
+        <button id="mining_button" th:if="${wallet.isMine}">Mining</button>
+        <button id="info_bottun" >Information</button>
         <button id="home" onclick="location.href='./home'">Back</button>
 
         <details open> <summary>Private  Key</summary> <p th:text="${wallet.privateKey}"></p> </details>
@@ -135,18 +140,18 @@
         <input type="hidden" id="address" th:value="${wallet.address}">
         <input type="hidden" id="info" th:value="${info}">
 
-        <!-- Send function will be inactive only in the case of miner, because miner account will be published for demo.-->
+        <!-- Send function will be shown only in the case of miner, because miner account will be published for demo.-->
         <div th:unless="${wallet.isMine}">
         <!-- <div> -->
             <h1>send money</h1>
             <div>
                 <label>Address</label>
-                <input id="recipient_address" type="text" size="45" autofocus="autofocus">
+                <input id="recipient_address" type="text" size="45" autofocus="autofocus" required>
 
                 <label>Amount</label>
-                <input id="send_amount" type="number">
+                <input id="send_amount" type="number" required>
 
-                <button id="send_money" style="margin-top: 10px;">Send</button>
+                <button id="send_button" style="margin-top: 10px;">Send</button>
             </div>
         </div>
     </body>
