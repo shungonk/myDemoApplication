@@ -46,8 +46,8 @@ public class MainController {
     @Autowired
     UserService userService;
 
-    private final String blockchainUrl = String.format("http://%s:%s", bcsProps.getHost(), bcsProps.getPort());
-    // private final String blockchainUrl = String.format("https://%s", System.getenv("BLOCKCHAIN_URL"));
+    // private final String blockchainUrl = String.format("http://%s:%s", bcsProps.getHost(), bcsProps.getPort());
+    private final String blockchainUrl = String.format("https://%s", System.getenv("BLOCKCHAIN_URL"));
     
     @GetMapping(value="/home")
     public String home(Authentication auth, Model model) {
