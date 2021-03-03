@@ -21,6 +21,11 @@ public class UserService {
         userRepository.save(new UserEntity(username, passwordEncoder.encode(password), true, true));
     }
 
+    @Transactional
+    public void registerInactiveUser(String username, String password) {
+        userRepository.save(new UserEntity(username, passwordEncoder.encode(password), true, false));
+    }
+
     public boolean isUsernameExists(String username) {
         return userRepository.countByUsername(username) != 0;
     }
