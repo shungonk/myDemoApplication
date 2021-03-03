@@ -5,7 +5,6 @@ CREATE TABLE wallet (
   , blockchain_address VARCHAR(100) NOT NULL
   , private_key VARCHAR(200) NOT NULL
   , public_key VARCHAR(200) NOT NULL
-  , mine TINYINT NOT NULL
   , CONSTRAINT wallet_pk PRIMARY KEY (id)
   , FOREIGN KEY fk_username(username) REFERENCES user(username)
 );

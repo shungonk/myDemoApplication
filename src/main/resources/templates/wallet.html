@@ -70,32 +70,12 @@
                     });
                 }
 
-                function mining() {
-                    if (!confirm('Are you sure to mine?')) {
-                        return
-                    }
-
-                    $.ajax({
-                        url: '/mine',
-                        type: 'POST',
-                        data: {'address': $('#address').val()}
-                    }).done(function(data, status, xhr) {
-                        alert(data['message']);
-                    }).fail(function(xhr, status, error) {
-                        alert('Server Error');
-                    });
-                }
-
                 function show_info() {
                     alert($('#info').val());
                 }
                 
                 $('#reload_button').click(function(){
                     load_balance();
-                });
-                
-                $('#mining_button').click(function(){
-                    mining();
                 });
                 
                 $('#send_button').click(function(){
@@ -117,7 +97,6 @@
         </p>
         
         <!-- <button id="reload_button">Reload</button> -->
-        <button id="mining_button" th:if="${wallet.isMine}">Mining</button>
         <button id="info_bottun" >Information</button>
         <button id="home" onclick="location.href='./home'">Back</button>
 
@@ -131,8 +110,7 @@
         <input type="hidden" id="address" th:value="${wallet.address}">
         <input type="hidden" id="info" th:value="${info}">
 
-        <!-- Send function will be hidden only in the case of miner account, because miner account will be published as demo.-->
-        <div th:unless="${wallet.isMine}">
+        <div th:if="${isActive}">
         <!-- <div> -->
             <h1>send money</h1>
             <div>

@@ -5,6 +5,7 @@ import java.net.URI;
 import java.time.Instant;
 
 import com.example.mydemo.config.BlockchainServerProperties;
+import com.example.mydemo.domain.service.UserService;
 import com.example.mydemo.domain.service.WalletService;
 import com.example.mydemo.util.StringUtil;
 import com.example.mydemo.web.form.TransactionForm;
@@ -41,6 +42,9 @@ public class MainController {
 
     @Autowired
     WalletService walletService;
+
+    @Autowired
+    UserService userService;
     
     @GetMapping(value="/home")
     public String home(Authentication auth, Model model) {
@@ -52,6 +56,7 @@ public class MainController {
             wallet.setBalanceStr(balanceStr);
         }
         model.addAttribute("walletList", walletList);
+        model.addAttribute("isActive", userService.isUserActive(user.getUsername()));
         return "home";
     }
     
@@ -67,6 +72,7 @@ public class MainController {
         var rspInfo = requestInfo();
         model.addAttribute("info", StringUtil.formatJson(rspInfo.getBody()));
         model.addAttribute("wallet", wallet);
+        model.addAttribute("isActive", userService.isUserActive(user.getUsername()));
         return "wallet";
     }
 
@@ -74,6 +80,9 @@ public class MainController {
     @PostMapping(value="/wallet/new", produces = MediaType.APPLICATION_JSON_VALUE)
     public String createWallet(@RequestParam("name") String name, Authentication auth, Model model) {
         var user = (User) auth.getPrincipal();
+        if (!userService.isUserActive(user.getUsername())) {
+            return StringUtil.makeJson("message", "FAILED: User Not Active.");
+        }
         var count = walletService.countByNameAndUsername(name, user.getUsername());
         if (count != 0) {
             return StringUtil.makeJson("message", "FAILED: Same Name Already Exists.");
@@ -104,7 +113,11 @@ public class MainController {
 
     @ResponseBody
     @PostMapping(value="/transaction", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String transaction(@RequestBody TransactionForm form) {
+    public String transaction(@RequestBody TransactionForm form, Authentication auth) {
+        var user = (User) auth.getPrincipal();
+        if (!userService.isUserActive(user.getUsername())) {
+            return StringUtil.makeJson("message", "FAILED: User Not Active.");
+        }
         // create transaction request
 		var transactionReq = new TransactionRequest(
 			form.getSenderAddress(),
@@ -121,13 +134,6 @@ public class MainController {
             return StringUtil.makeJson("message", "FAILED: Address cannot be same as sender's one");
 
         var res = requestTransaction(transactionReq);
-        return res.getBody();
-    }
-
-    @ResponseBody
-    @PostMapping(value="/mine", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String mine(@RequestParam("address") String address) {
-        var res = requestMine(address);
         return res.getBody();
     }
 
@@ -205,35 +211,6 @@ public class MainController {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(purchaseReq.toJson());
             return client.exchange(request, String.class);
-
-        } catch (HttpClientErrorException e) {
-            return ResponseEntity
-                .status(e.getStatusCode())
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(e.getResponseBodyAsString());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity
-                .status(HttpStatus.SERVICE_UNAVAILABLE)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(StringUtil.makeJson(
-                    "message", "ERROR: Server Error"));
-        }
-    }
-
-    public ResponseEntity<String> requestMine(String address) {
-        try {
-            var client = new RestTemplate(new SimpleClientHttpRequestFactory());
-            var headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-            var uri = new URI(String.format("http://%s:%s/mine",
-                bcsProperties.getHost(), bcsProperties.getPort()));
-            var queryURI = UriComponentsBuilder
-                .fromUri(uri)
-                .queryParam("address", address)
-                .build().encode().toUri();
-            var req = new RequestEntity<>(headers, HttpMethod.POST, queryURI);
-            return client.exchange(req, String.class);
 
         } catch (HttpClientErrorException e) {
             return ResponseEntity

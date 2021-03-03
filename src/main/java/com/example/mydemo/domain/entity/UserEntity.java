@@ -19,12 +19,16 @@ public class UserEntity {
     @Column(name="enabled")
     private boolean enabled;
 
+    @Column(name="active")
+    private boolean active;
+
     public UserEntity() {}
 
-    public UserEntity(String username, String password, boolean enabled) {
+    public UserEntity(String username, String password, boolean enabled, boolean active) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
+        this.active = active;
     }
 
     public String getUsername() {
@@ -39,6 +43,10 @@ public class UserEntity {
         return enabled;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -49,5 +57,9 @@ public class UserEntity {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
