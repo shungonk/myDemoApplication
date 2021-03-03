@@ -1,3 +1,4 @@
+-- MySQL
 CREATE TABLE wallet (
   id INT AUTO_INCREMENT NOT NULL
   , name VARCHAR(50) NOT NULL
@@ -6,5 +7,5 @@ CREATE TABLE wallet (
   , private_key VARCHAR(200) NOT NULL
   , public_key VARCHAR(200) NOT NULL
   , CONSTRAINT wallet_pk PRIMARY KEY (id)
-  , FOREIGN KEY fk_username(username) REFERENCES user(username)
+  , FOREIGN KEY fk_username(username) REFERENCES users(username)
 );
