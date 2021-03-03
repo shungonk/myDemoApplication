@@ -32,14 +32,16 @@
                     }).done(function(data, status, xhr) {
                         let balance = data['balance'];
                         $('#wallet_amount').text(balance);
+                        alert(data['message']);
                     }).fail(function(xhr, status, error) {
-                        // alert('Get Balance Failed');
+                        alert('Server Error');
                     });
                 }
 
                 function send_money() {
                     let confirm_result = confirm('Are you sure to send?');
                     if (confirm_result !== true) {
+                        alert('Canceled')
                         return
                     }
 
@@ -51,19 +53,9 @@
                         'amount': $('#send_amount').val(),
                     };
 
-                    if (transaction_data.recipientAddress == '') {
-                        alert('Falied: Fill in the blanks')
-                        return;
-                    }
-
                     var pattern = /^([1-9]\d*|0)(\.\d+)?$/;
                     if (!pattern.test(transaction_data.amount)) {
                         alert('Falied: Amount should be positive number')
-                        return;
-                    }
-
-                    if (transaction_data.senderAddress == transaction_data.recipientAddress) {
-                        alert('Failed: sender and recipient are same.');
                         return;
                     }
                     
@@ -122,7 +114,7 @@
         <h1 th:text="${wallet.name}">wallet</h1>
 
         <p style="font-size:xx-large; margin: 25px 0px 15px 5px; font-variant-numeric: tabular-nums;">
-            <span id="wallet_amount" th:text="${wallet.getBalanceStr}">0.000000</span><span> SBC</span>
+            <span id="wallet_amount" th:text="${wallet.getBalanceStr}">0.00</span><span> SBC</span>
         </p>
         
         <button id="reload_button">Reload</button>
@@ -140,7 +132,7 @@
         <input type="hidden" id="address" th:value="${wallet.address}">
         <input type="hidden" id="info" th:value="${info}">
 
-        <!-- Send function will be shown only in the case of miner, because miner account will be published for demo.-->
+        <!-- Send function will be hidden only in the case of miner account, because miner account will be published as demo.-->
         <div th:unless="${wallet.isMine}">
         <!-- <div> -->
             <h1>send money</h1>

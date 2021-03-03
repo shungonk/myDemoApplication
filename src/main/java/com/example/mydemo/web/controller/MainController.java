@@ -76,7 +76,7 @@ public class MainController {
         var user = (User) auth.getPrincipal();
         var count = walletService.countByNameAndUsername(name, user.getUsername());
         if (count != 0) {
-            return StringUtil.makeJson("message", "Error: Same Name Already Exists.");
+            return StringUtil.makeJson("message", "FAILED: Same Name Already Exists.");
         }
         var newWallet = Wallet.create(name);
 
@@ -112,6 +112,13 @@ public class MainController {
 			form.getAmount(),
 			Instant.now().toEpochMilli());
 		transactionReq.signate(form.getSenderPrivateKey(), form.getSenderPublicKey());
+
+        if (!transactionReq.validateFields())
+            return StringUtil.makeJson("message", "FAILED: Fill in the all blanks");
+        if (!transactionReq.validateAmount())
+            return StringUtil.makeJson("message", "FAILED: Amount should be positive");
+        if (transactionReq.getSenderAddress().equals(transactionReq.getRecipientAddress()))
+            return StringUtil.makeJson("message", "FAILED: Address cannot be same as sender's one");
 
         var res = requestTransaction(transactionReq);
         return res.getBody();
