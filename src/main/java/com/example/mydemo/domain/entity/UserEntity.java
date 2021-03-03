@@ -27,7 +27,7 @@ public class UserEntity {
     @Column(name = "active", nullable = false)
     private boolean active;
 
-    @OneToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     private List<WalletEntity> wallets;
 
     public UserEntity() {}
