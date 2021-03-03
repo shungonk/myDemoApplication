@@ -91,7 +91,7 @@
         <!-- New Wallet function will be inactive only in the case of miner, because miner account will be published for demo.-->
         <div th:unless="${!walletList.isEmpty and walletList.get(0).isMine}">
         <!-- <div> -->
-            <button id="disp_new_wallet_area">New Wallet</button>
+            <button id="disp_new_wallet_area" style="padding: 10px 30px 10px 25px;">+ New Wallet</button>
             <div id="new_wallet_area" style="display: none;">
                 <p><label>wallet name</label>
                 <input id="new_wallet_name" type="text" size="30">

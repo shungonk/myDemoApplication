@@ -11,7 +11,7 @@
         <script>
             $(function () {
                 submit_token_to_ajaxheader();
-                // setInterval(load_balance, 10000);
+                setInterval(load_balance, 10000);
 
                 function submit_token_to_ajaxheader() {
                     let token = $("meta[name='_csrf']").attr("content");
@@ -32,7 +32,6 @@
                     }).done(function(data, status, xhr) {
                         let balance = data['balance'];
                         $('#wallet_amount').text(balance);
-                        alert(data['message']);
                     }).fail(function(xhr, status, error) {
                         alert('Server Error');
                     });
@@ -117,7 +116,7 @@
             <span id="wallet_amount" th:text="${wallet.getBalanceStr}">0.00</span><span> SBC</span>
         </p>
         
-        <button id="reload_button">Reload</button>
+        <!-- <button id="reload_button">Reload</button> -->
         <button id="mining_button" th:if="${wallet.isMine}">Mining</button>
         <button id="info_bottun" >Information</button>
         <button id="home" onclick="location.href='./home'">Back</button>
