@@ -29,7 +29,7 @@
                 <h1>Sign Up</h1>
 
                 <form th:action="@{/signup}" th:object="${signupForm}" method="post">
-                    <p th:if="${ConfirmationViolation}"><em>Confirmation password doesn't match.</em></p>
+                    <p th:if="${ConfirmationViolation}"><em>Confirmation password incorrect.</em></p>
                     <p th:if="${UniqueConstraintViolation}"><em>Username already exists.</em></p>
                     <p th:if="${signupError}"><em>Signup Error.</em></p>
 
