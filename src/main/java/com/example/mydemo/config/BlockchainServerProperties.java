@@ -7,13 +7,23 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "blockchain")
 public class BlockchainServerProperties {
     
-    private String hostUri;
+    private String host;
+    private int port;
 
-    public String getHostUri() {
-        return hostUri;
+    public String getHost() {
+        return host;
     }
 
-    public void setHost(String hostUri) {
-        this.hostUri = hostUri;
+    public int getPort() {
+        return port;
     }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+    
 }
