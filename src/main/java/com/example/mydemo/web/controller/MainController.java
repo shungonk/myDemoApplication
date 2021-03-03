@@ -151,7 +151,8 @@ public class MainController {
             var headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             var uri = new URI(String.format("https://%s/balance", System.getenv("BLOCKCHAIN_URL")));
-            // var uri = new URI(String.format("http://%s/balance", bcsProperties.getHostUri()));
+            // var uri = new URI(String.format("http://%s:%s/balance", 
+            //     bcsProperties.getHost(), bcsProperties.getPort()));
             var queryUri = UriComponentsBuilder
                 .fromUri(uri)
                 .queryParam("address", address)
@@ -179,7 +180,8 @@ public class MainController {
         try {
             var client = new RestTemplate(new SimpleClientHttpRequestFactory());
             var uri = new URI(String.format("https://%s/transaction", System.getenv("BLOCKCHAIN_URL")));
-            // var uri = new URI(String.format("http://%s/transaction", bcsProperties.getHostUri()));
+            // var uri = new URI(String.format("http://%s:%s/transaction",
+            //     bcsProperties.getHost(), bcsProperties.getPort()));
             var request = RequestEntity
                 .post(uri)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -205,7 +207,8 @@ public class MainController {
         try {
             var client = new RestTemplate(new SimpleClientHttpRequestFactory());
             var uri = new URI(String.format("https://%s/purchase", System.getenv("BLOCKCHAIN_URL")));
-            // var uri = new URI(String.format("http://%s/purchase", bcsProperties.getHostUri()));
+            // var uri = new URI(String.format("http://%s:%s/purchase",
+            //     bcsProperties.getHost(), bcsProperties.getPort()));
             var request = RequestEntity
                 .post(uri)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -231,7 +234,8 @@ public class MainController {
         try {
             var client = new RestTemplate(new SimpleClientHttpRequestFactory());
             var uri = new URI(String.format("https://%s/info", System.getenv("BLOCKCHAIN_URL")));
-            // var uri = new URI(String.format("http://%s/info", bcsProperties.getHostUri()));
+            // var uri = new URI(String.format("http://%s:%s/info", 
+            //     bcsProperties.getHost(), bcsProperties.getPort()));
             var req = RequestEntity.get(uri).build();
             return client.exchange(req, String.class);
 
