@@ -29,6 +29,7 @@
                 <h1>Sign Up</h1>
 
                 <form th:action="@{/signup}" th:object="${signupForm}" method="post">
+                    <p th:if="${ConfirmationViolation}"><em>Confirmation password doesn't match.</em></p>
                     <p th:if="${UniqueConstraintViolation}"><em>Username already exists.</em></p>
                     <p th:if="${signupError}"><em>Signup Error.</em></p>
 
@@ -38,6 +39,9 @@
                     <p><label for="password">Password</label>
                     <input type="password" th:field="*{password}" size="35"/>
                     <em th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</em></p>
+                    <p><label for="confirmPassword">Confirm Password</label>
+                    <input type="password" th:field="*{confirmPassword}" size="35"/>
+                    <em th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}">Password Error</em></p>
                     <p><input type="submit" value="Sign up"/></p>
                 </form>
 

@@ -1,5 +1,7 @@
 package com.example.mydemo.web.controller;
 
+import java.util.Objects;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -31,6 +33,11 @@ public class AuthController {
      public String signupPost(Model model, @Valid SignupForm signupForm, BindingResult bindingResult,
             HttpServletRequest request) {
         if (bindingResult.hasErrors()) {
+            return "signup";
+        }
+
+        if (Objects.equals(signupForm.getPassword(), signupForm.getConfirmPassword())) {
+            model.addAttribute("ConfirmationViolation", true);
             return "signup";
         }
 

@@ -38,13 +38,16 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class MainController {
 
     @Autowired
-    BlockchainServerProperties bcsProperties;
+    BlockchainServerProperties bcsProps;
 
     @Autowired
     WalletService walletService;
 
     @Autowired
     UserService userService;
+
+    private final String blockchainUrl = String.format("http://%s:%s", bcsProps.getHost(), bcsProps.getPort());
+    // private final String blockchainUrl = String.format("https://%s", System.getenv("BLOCKCHAIN_URL"));
     
     @GetMapping(value="/home")
     public String home(Authentication auth, Model model) {
@@ -150,11 +153,9 @@ public class MainController {
             var client = new RestTemplate(new SimpleClientHttpRequestFactory());
             var headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-            var uri = new URI(String.format("https://%s/balance", System.getenv("BLOCKCHAIN_URL")));
-            // var uri = new URI(String.format("http://%s:%s/balance", 
-            //     bcsProperties.getHost(), bcsProperties.getPort()));
             var queryUri = UriComponentsBuilder
-                .fromUri(uri)
+                .fromUri(new URI(blockchainUrl))
+                .path("/balance")
                 .queryParam("address", address)
                 .build().encode().toUri();
             var req = new RequestEntity<>(headers, HttpMethod.GET, queryUri);
@@ -179,11 +180,8 @@ public class MainController {
     public ResponseEntity<String> requestTransaction(TransactionRequest transactionReq) {
         try {
             var client = new RestTemplate(new SimpleClientHttpRequestFactory());
-            var uri = new URI(String.format("https://%s/transaction", System.getenv("BLOCKCHAIN_URL")));
-            // var uri = new URI(String.format("http://%s:%s/transaction",
-            //     bcsProperties.getHost(), bcsProperties.getPort()));
             var request = RequestEntity
-                .post(uri)
+                .post(new URI(blockchainUrl + "/transaction"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(transactionReq.toJson());
             return client.exchange(request, String.class);
@@ -206,11 +204,8 @@ public class MainController {
     public ResponseEntity<String> requestPurchase(PurchaseRequest purchaseReq) {
         try {
             var client = new RestTemplate(new SimpleClientHttpRequestFactory());
-            var uri = new URI(String.format("https://%s/purchase", System.getenv("BLOCKCHAIN_URL")));
-            // var uri = new URI(String.format("http://%s:%s/purchase",
-            //     bcsProperties.getHost(), bcsProperties.getPort()));
             var request = RequestEntity
-                .post(uri)
+                .post(new URI(blockchainUrl + "/purchase"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(purchaseReq.toJson());
             return client.exchange(request, String.class);
@@ -233,10 +228,9 @@ public class MainController {
     public ResponseEntity<String> requestInfo() {
         try {
             var client = new RestTemplate(new SimpleClientHttpRequestFactory());
-            var uri = new URI(String.format("https://%s/info", System.getenv("BLOCKCHAIN_URL")));
-            // var uri = new URI(String.format("http://%s:%s/info", 
-            //     bcsProperties.getHost(), bcsProperties.getPort()));
-            var req = RequestEntity.get(uri).build();
+            var req = RequestEntity
+                .get(new URI(blockchainUrl + "/info"))
+                .build();
             return client.exchange(req, String.class);
 
         } catch (Exception e) {
