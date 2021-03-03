@@ -36,7 +36,7 @@ public class AuthController {
             return "signup";
         }
 
-        if (Objects.equals(signupForm.getPassword(), signupForm.getConfirmPassword())) {
+        if (!Objects.equals(signupForm.getPassword(), signupForm.getConfirmPassword())) {
             model.addAttribute("ConfirmationViolation", true);
             return "signup";
         }
