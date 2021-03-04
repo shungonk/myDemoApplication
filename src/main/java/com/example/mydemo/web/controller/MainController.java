@@ -3,7 +3,7 @@ package com.example.mydemo.web.controller;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-import com.example.mydemo.config.BlockchainServerProperties;
+import com.example.mydemo.config.BlockchainProperties;
 import com.example.mydemo.domain.service.UserService;
 import com.example.mydemo.domain.service.WalletService;
 import com.example.mydemo.util.StringUtil;
@@ -37,7 +37,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class MainController {
 
     @Autowired
-    BlockchainServerProperties bcsProps;
+    BlockchainProperties bcsProps;
 
     @Autowired
     WalletService walletService;

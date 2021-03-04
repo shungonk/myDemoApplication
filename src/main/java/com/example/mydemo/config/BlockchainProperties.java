@@ -8,16 +8,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationProperties(prefix = "blockchain")
-public class BlockchainServerProperties {
+public class BlockchainProperties {
     
     private String host;
     private int port;
+    private URI uri;
 
-    public URI getUrl() throws URISyntaxException {
-        // local
-        // return new URI(String.format("http://%s:%s", getHost(), getPort()));
-        // Heroku
-        return new URI(String.format("https://%s", System.getenv("BLOCKCHAIN_URL")));
+    public URI getUrl() {
+        return uri;
     }
 
     public String getHost() {
@@ -26,6 +24,13 @@ public class BlockchainServerProperties {
 
     public int getPort() {
         return port;
+    }
+
+    public void setUri(URI uri) throws URISyntaxException {
+        // local
+        // this.uri = new URI(String.format("http://%s:%s", getHost(), getPort()));
+        // Heroku
+        this.uri = new URI(String.format("https://%s", System.getenv("BLOCKCHAIN_URL")));
     }
 
     public void setHost(String host) {
