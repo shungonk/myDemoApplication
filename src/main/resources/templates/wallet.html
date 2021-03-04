@@ -106,7 +106,7 @@
 
         <!-- hidden -->
         <input type="hidden" id="private_key" th:value="${wallet.privateKey}" th:if="${isActive}">
-        <input type="hidden" id="public_key" th:value="${wallet.publicKey}">
+        <input type="hidden" id="public_key" th:value="${wallet.publicKey}" th:if="${isActive}">
         <input type="hidden" id="address" th:value="${wallet.address}">
         <input type="hidden" id="info" th:value="${info}">
 
