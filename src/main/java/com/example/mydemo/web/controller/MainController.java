@@ -151,7 +151,7 @@ public class MainController {
             var headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             var uri = UriComponentsBuilder
-                .fromUri(new URI(bcsProps.getUrl()))
+                .fromUri(new URI(bscProps.getAbsoluteUri()))
                 .path("/balance")
                 .queryParam("address", address)
                 .build().encode().toUri();
@@ -180,7 +180,7 @@ public class MainController {
             var headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             var uri = UriComponentsBuilder
-                .fromUri(new URI(bcsProps.getUrl()))
+                .fromUri(new URI(bscProps.getAbsoluteUri()))
                 .path("/transaction")
                 .build().encode().toUri();
             var req = new RequestEntity<>(transactionReq.toJson(), headers, HttpMethod.POST, uri);
@@ -207,7 +207,7 @@ public class MainController {
             var headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             var uri = UriComponentsBuilder
-                .fromUri(new URI(bcsProps.getUrl()))
+                .fromUri(new URI(bscProps.getAbsoluteUri()))
                 .path("/purchase")
                 .build().encode().toUri();
             var req = new RequestEntity<>(purchaseReq.toJson(), headers, HttpMethod.POST, uri);
@@ -232,7 +232,7 @@ public class MainController {
         try {
             var client = new RestTemplate(new SimpleClientHttpRequestFactory());
             var uri = UriComponentsBuilder
-                .fromUri(new URI(bcsProps.getUrl()))
+                .fromUri(new URI(bscProps.getAbsoluteUri()))
                 .path("/info")
                 .build().encode().toUri();
             var req = new RequestEntity<>(HttpMethod.GET, uri);
