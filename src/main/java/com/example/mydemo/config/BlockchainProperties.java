@@ -10,35 +10,17 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "blockchain")
 public class BlockchainProperties {
     
-    private String host;
-    private int port;
-    private URI uri;
+    private String uri;
 
-    public URI getUrl() {
-        return uri;
+    public URI getUrl() throws URISyntaxException {
+        return new URI(uri);
     }
 
-    public String getHost() {
-        return host;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setUri(URI uri) throws URISyntaxException {
+    public void setUri(String uri) {
         // local
-        // this.uri = new URI(String.format("http://%s:%s", getHost(), getPort()));
+        // this.uri = String.format("http://%s", uri);
         // Heroku
-        this.uri = new URI(String.format("https://%s", System.getenv("BLOCKCHAIN_URL")));
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
+        this.uri = String.format("https://%s", System.getenv("BLOCKCHAIN_URL"));
     }
     
 }
