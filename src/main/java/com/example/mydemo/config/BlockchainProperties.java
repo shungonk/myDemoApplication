@@ -18,9 +18,9 @@ public class BlockchainProperties {
 
     public void setUri(String uri) {
         // local
-        // this.uri = String.format("http://%s", uri);
+        this.uri = String.format("http://%s", uri);
         // Heroku
-        this.uri = String.format("https://%s", System.getenv("BLOCKCHAIN_URL"));
+        // this.uri = String.format("https://%s", System.getenv("BLOCKCHAIN_URL"));
     }
     
 }
