@@ -15,9 +15,9 @@ public class BlockchainServerProperties {
 
     public URI getUrl() throws URISyntaxException {
         // local
-        return new URI(String.format("http://%s:%s", getHost(), getPort()));
+        // return new URI(String.format("http://%s:%s", getHost(), getPort()));
         // Heroku
-        // return new URI(String.format("https://%s", System.getenv("BLOCKCHAIN_URL")));
+        return new URI(String.format("https://%s", System.getenv("BLOCKCHAIN_URL")));
     }
 
     public String getHost() {
