@@ -13,7 +13,7 @@ public class BlockchainProperties {
         return url;
     }
 
-    public void setUri(String url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 }
