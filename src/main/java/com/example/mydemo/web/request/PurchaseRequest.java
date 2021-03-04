@@ -5,7 +5,7 @@ import java.security.GeneralSecurityException;
 
 import com.example.mydemo.util.SecurityUtil;
 
-public class PurchaseRequest extends SignatureRequest {
+public class PurchaseRequest extends SignatureCertifier {
 
     private String address;
     private BigDecimal amount;

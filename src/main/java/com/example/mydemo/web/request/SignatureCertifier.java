@@ -4,14 +4,14 @@ import java.security.GeneralSecurityException;
 
 import com.example.mydemo.util.SecurityUtil;
 import com.example.mydemo.util.StringUtil;
-import com.google.gson.GsonBuilder;
 
-public abstract class SignatureRequest {
+
+public abstract class SignatureCertifier {
 
     protected String publicKey; // will be set in signate method
     protected String signature; // will be set in signate method
 
-    protected SignatureRequest() {}
+    protected SignatureCertifier() {}
 
     public String getPublicKey() {
         return publicKey;
@@ -38,7 +38,7 @@ public abstract class SignatureRequest {
         try {
             return SecurityUtil.verifyEcdsaSign(publicKey, getData(), signature);
         } catch (GeneralSecurityException e) {
-            // LogWriter.warning("Failed to verity signature");
+            // LogWriter.warning("Failed to verity ECDSA signature");
             return false;
         }
     }
@@ -48,7 +48,6 @@ public abstract class SignatureRequest {
     }
 
     public String toJsonPrettyPrinting() {
-        var gsonBuilder = new GsonBuilder().setPrettyPrinting().create();
-        return gsonBuilder.toJson(this);
+        return StringUtil.toJsonPrettyPrinting(this);
     }
 }

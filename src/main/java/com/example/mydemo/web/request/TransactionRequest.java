@@ -5,7 +5,7 @@ import java.security.GeneralSecurityException;
 
 import com.example.mydemo.util.SecurityUtil;
 
-public class TransactionRequest extends SignatureRequest {
+public class TransactionRequest extends SignatureCertifier {
 
     private String senderAddress;
     private String recipientAddress;
