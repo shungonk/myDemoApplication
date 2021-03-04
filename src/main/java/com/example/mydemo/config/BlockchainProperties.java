@@ -1,8 +1,5 @@
 package com.example.mydemo.config;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -12,8 +9,8 @@ public class BlockchainProperties {
     
     private String url;
 
-    public URI getUrl() throws URISyntaxException {
-        return new URI(url);
+    public String getUrl() {
+        return url;
     }
 
     public void setUri(String url) {
