@@ -10,13 +10,13 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "blockchain")
 public class BlockchainProperties {
     
-    private String uri;
+    private String url;
 
-    public URI getUri() throws URISyntaxException {
-        return new URI(uri);
+    public URI getUrl() throws URISyntaxException {
+        return new URI(url);
     }
 
-    public void setUri(String uri) {
-        this.uri = uri;
+    public void setUri(String url) {
+        this.url = url;
     }
 }
