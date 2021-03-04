@@ -100,8 +100,8 @@
         <button id="info_bottun" >Information</button>
         <button id="home" onclick="location.href='./home'">Back</button>
 
-        <details th:if="${isActive}"></details> open> <summary>Private  Key</summary> <p th:text="${wallet.privateKey}"></p> </details>
-        <details th:if="${isActive}"></details> open> <summary>Public  Key</summary> <p th:text="${wallet.publicKey}"></p> </details>
+        <details th:if="${isActive}" open> <summary>Private  Key</summary> <p th:text="${wallet.privateKey}"></p> </details>
+        <details th:if="${isActive}" open> <summary>Public  Key</summary> <p th:text="${wallet.publicKey}"></p> </details>
         <details open> <summary>Address</summary> <p th:text="${wallet.address}"></p> </details>
 
         <!-- hidden -->
