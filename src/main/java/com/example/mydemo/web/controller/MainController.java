@@ -1,7 +1,6 @@
 package com.example.mydemo.web.controller;
 
 import java.math.BigDecimal;
-import java.net.URI;
 import java.time.Instant;
 
 import com.example.mydemo.config.BlockchainServerProperties;
@@ -46,9 +45,6 @@ public class MainController {
     @Autowired
     UserService userService;
 
-    // private final String blockchainUrl = String.format("http://%s:%s", bcsProps.getHost(), bcsProps.getPort());
-    private final String blockchainUrl = String.format("https://%s", System.getenv("BLOCKCHAIN_URL"));
-    
     @GetMapping(value="/home")
     public String home(Authentication auth, Model model) {
         var user = (User) auth.getPrincipal();
@@ -153,12 +149,12 @@ public class MainController {
             var client = new RestTemplate(new SimpleClientHttpRequestFactory());
             var headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-            var queryUri = UriComponentsBuilder
-                .fromUri(new URI(blockchainUrl))
+            var uri = UriComponentsBuilder
+                .fromUri(bcsProps.getUrl())
                 .path("/balance")
                 .queryParam("address", address)
                 .build().encode().toUri();
-            var req = new RequestEntity<>(headers, HttpMethod.GET, queryUri);
+            var req = new RequestEntity<>(headers, HttpMethod.GET, uri);
             return client.exchange(req, String.class);
 
         } catch (HttpClientErrorException e) {
@@ -180,11 +176,14 @@ public class MainController {
     public ResponseEntity<String> requestTransaction(TransactionRequest transactionReq) {
         try {
             var client = new RestTemplate(new SimpleClientHttpRequestFactory());
-            var request = RequestEntity
-                .post(new URI(blockchainUrl + "/transaction"))
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(transactionReq.toJson());
-            return client.exchange(request, String.class);
+            var headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            var uri = UriComponentsBuilder
+                .fromUri(bcsProps.getUrl())
+                .path("/transaction")
+                .build().encode().toUri();
+            var req = new RequestEntity<>(transactionReq.toJson(), headers, HttpMethod.POST, uri);
+            return client.exchange(req, String.class);
 
         } catch (HttpClientErrorException e) {
             return ResponseEntity
@@ -204,11 +203,14 @@ public class MainController {
     public ResponseEntity<String> requestPurchase(PurchaseRequest purchaseReq) {
         try {
             var client = new RestTemplate(new SimpleClientHttpRequestFactory());
-            var request = RequestEntity
-                .post(new URI(blockchainUrl + "/purchase"))
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(purchaseReq.toJson());
-            return client.exchange(request, String.class);
+            var headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            var uri = UriComponentsBuilder
+                .fromUri(bcsProps.getUrl())
+                .path("/purchase")
+                .build().encode().toUri();
+            var req = new RequestEntity<>(purchaseReq.toJson(), headers, HttpMethod.POST, uri);
+            return client.exchange(req, String.class);
 
         } catch (HttpClientErrorException e) {
             return ResponseEntity
@@ -228,9 +230,11 @@ public class MainController {
     public ResponseEntity<String> requestInfo() {
         try {
             var client = new RestTemplate(new SimpleClientHttpRequestFactory());
-            var req = RequestEntity
-                .get(new URI(blockchainUrl + "/info"))
-                .build();
+            var uri = UriComponentsBuilder
+                .fromUri(bcsProps.getUrl())
+                .path("/info")
+                .build().encode().toUri();
+            var req = new RequestEntity<>(HttpMethod.GET, uri);
             return client.exchange(req, String.class);
 
         } catch (Exception e) {
