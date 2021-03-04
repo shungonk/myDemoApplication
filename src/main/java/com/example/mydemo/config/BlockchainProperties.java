@@ -12,15 +12,11 @@ public class BlockchainProperties {
     
     private String uri;
 
-    public URI getUrl() throws URISyntaxException {
+    public URI getUri() throws URISyntaxException {
         return new URI(uri);
     }
 
     public void setUri(String uri) {
-        // local
-        this.uri = String.format("http://%s", uri);
-        // Heroku
-        // this.uri = String.format("https://%s", System.getenv("BLOCKCHAIN_URL"));
+        this.uri = uri;
     }
-    
 }
