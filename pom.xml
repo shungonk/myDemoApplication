@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>mydemo</artifactId>
+	<artifactId>wallet_app</artifactId>
 	<version>0.0.1</version>
-	<name>mydemo</name>
+	<name>wallet_app</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>
@@ -19,8 +19,8 @@
 	<dependencies>
 
 		<dependency>
-		<groupId>org.postgresql</groupId>
-		<artifactId>postgresql</artifactId>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
 		</dependency>
 
 		<dependency>
@@ -28,7 +28,6 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 			<version>2.4.3</version>
 		</dependency>
-
 
 		<dependency>
 			<groupId>org.bitcoinj</groupId>
@@ -87,28 +86,25 @@
 			<optional>true</optional>
 		</dependency>
 
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
-		</dependency>
-
 	</dependencies>
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <fork>true</fork>
+                    <mainClass>com.example.mydemo.WalletApplication</mainClass>
+                </configuration>
+                  <executions>
+                    <execution>
+                      <goals>
+                        <goal>repackage</goal>
+                      </goals>
+                    </execution>
+                </executions>
+            </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>

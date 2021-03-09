@@ -1,26 +1,27 @@
 package com.example.mydemo.config;
 
-import javax.sql.DataSource;
+// local - need to comment out
+// Heroku - need to uncomment
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
+// import javax.sql.DataSource;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+// import com.zaxxer.hikari.HikariConfig;
+// import com.zaxxer.hikari.HikariDataSource;
 
-// local - need to comment out this class
-// Heroku
-@Configuration
-public class DatabaseConfig {
+// import org.springframework.beans.factory.annotation.Value;
+// import org.springframework.context.annotation.Bean;
+// import org.springframework.context.annotation.Configuration;
 
-    @Value("${spring.datasource.url}")
-    private String dbUrl;
+// @Configuration
+// public class DatabaseConfig {
 
-    @Bean
-    public DataSource dataSource() {
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(dbUrl);
-        return new HikariDataSource(config);
-    }
-}
+//     @Value("${spring.datasource.url}")
+//     private String dbUrl;
+
+//     @Bean
+//     public DataSource dataSource() {
+//         HikariConfig config = new HikariConfig();
+//         config.setJdbcUrl(dbUrl);
+//         return new HikariDataSource(config);
+//     }
+// }
