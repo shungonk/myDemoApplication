@@ -28,9 +28,7 @@ wallet_app
 
 1. ウォレットを作成し、詳細画面を開きます。
 
-1. Addressに送金先のウォレットのアドレス、Amountに送金額を入力します。
-
-1. Sendボタンを押して送金します。
+1. Addressに送金先アドレス、Amountに送金額を入力し、Sendボタンを押して送金します。
 
 1. 残高が更新されていることを確認します。
 
@@ -41,6 +39,10 @@ wallet_app
 1. 数分後にブロックチェーンに
 [ブロック](https://murmuring-depths-71832.herokuapp.com/chain)
 が追加されていることを確認します。
+
+1. ブロックチェーンのマイナーアカウントに報酬金が追加されていることを確認します。
+    
+    （マイナーアカウントはUsername:TestMiner, Password:TestMinerで公開しています。）
 
 ## ローカルでの起動
 1. [ブロックチェーンAPI](https://github.com/shungonk/sbchain)
